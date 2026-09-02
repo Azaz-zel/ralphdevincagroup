@@ -1,0 +1,730 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+@source '../js/**/*.js';
+
+/* =========================================================
+   TOKENS
+   ========================================================= */
+
+@theme {
+
+    /* Fonts. Faces are self-hosted by the Vite font plugin. */
+    --font-display: 'Newsreader', Georgia, serif;
+    --font-body: 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+    /* Palette. */
+    --color-ink: #1B1A17;
+    --color-paper: #F7F5F0;
+    --color-surface: #FFFFFF;
+    --color-brass: #B08D57;
+    --color-vinca: #6F6E9B;
+    --color-stone: #6B675F;
+    --color-line: #E3DFD6;
+
+    /* Text-safe accent variants.
+       brass on paper is 2.84:1 and vinca on paper is 4.40:1 — both below the
+       4.5:1 the project requires. The two tokens above stay exactly as
+       specified and are used for rules, marks, and hover states; these
+       darkened pairs carry accent *text* such as eyebrows.
+       brass-deep on paper = 4.77:1, vinca-deep on paper = 5.56:1.
+       vinca-soft is the same relationship inverted, for ink backgrounds,
+       where plain vinca falls to 3.63:1. */
+    --color-brass-deep: #856839;
+    --color-vinca-deep: #5F5E8C;
+    --color-vinca-soft: #9D9CC4;
+
+    /* Rhythm. */
+    --spacing-section: 3.5rem;
+    --radius-card: 4px;
+}
+
+/* Default accent for group-level pages. Divisions override it. */
+:root {
+    --accent: var(--color-brass);
+    --accent-text: var(--color-brass-deep);
+    --section-space: 3.5rem;
+}
+
+@media (min-width: 768px) {
+    :root { --section-space: 5rem; }
+}
+
+@media (min-width: 1024px) {
+    :root { --section-space: 8rem; }
+}
+
+/* A section declares which division it speaks for. Only the two-division
+   block on the home page puts both on one screen, and it does so by scoping
+   each card separately. */
+.accent-brass {
+    --accent: var(--color-brass);
+    --accent-text: var(--color-brass-deep);
+}
+
+.accent-vinca {
+    --accent: var(--color-vinca);
+    --accent-text: var(--color-vinca-deep);
+}
+
+/* On ink, the accents swap to their legible counterparts. */
+.on-ink {
+    --accent-text: var(--color-brass);
+}
+
+.on-ink.accent-vinca {
+    --accent-text: var(--color-vinca-soft);
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.75;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+::selection {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+}
+
+/* Focus is never removed, only replaced with something clearer. */
+:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 1px;
+}
+
+.on-ink :focus-visible {
+    outline-color: var(--color-paper);
+}
+
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+
+.shell {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .shell { padding-inline: 2.5rem; }
+}
+
+@media (min-width: 1280px) {
+    .shell { padding-inline: 4rem; }
+}
+
+.section {
+    padding-block: var(--section-space);
+}
+
+.section-tight {
+    padding-block: calc(var(--section-space) * 0.6);
+}
+
+/* Opens a page but leaves the space below to whatever follows, so a short
+   header does not sit above a void. */
+.section-open {
+    padding-block-start: var(--section-space);
+}
+
+/* Text is never allowed to run wider than it can be read. */
+.measure {
+    max-width: 68ch;
+}
+
+.measure-narrow {
+    max-width: 54ch;
+}
+
+.rule {
+    border: 0;
+    border-top: 1px solid var(--color-line);
+    margin: 0;
+}
+
+.on-ink .rule {
+    border-top-color: rgb(247 245 240 / 0.14);
+}
+
+/* =========================================================
+   TYPE
+   ========================================================= */
+
+.display-xl {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.5rem, 1.5rem + 4.5vw, 4.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+    margin: 0;
+}
+
+.display-l {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2rem, 1.4rem + 2.7vw, 3.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin: 0;
+}
+
+.heading {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin: 0;
+}
+
+.heading-sm {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    margin: 0;
+}
+
+.eyebrow {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.6875rem;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--accent-text);
+    margin: 0;
+}
+
+.eyebrow-quiet {
+    color: var(--color-stone);
+}
+
+.label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--color-stone);
+    margin: 0;
+}
+
+.on-ink .label,
+.on-ink .eyebrow-quiet {
+    color: rgb(247 245 240 / 0.62);
+}
+
+.body-text {
+    font-size: 1rem;
+    line-height: 1.75;
+    margin: 0;
+}
+
+.body-text + .body-text {
+    margin-top: 1.25rem;
+}
+
+.lede {
+    font-size: 1.125rem;
+    line-height: 1.65;
+    color: var(--color-stone);
+    margin: 0;
+}
+
+.on-ink .lede,
+.on-ink .muted {
+    color: rgb(247 245 240 / 0.72);
+}
+
+.muted {
+    color: var(--color-stone);
+}
+
+.small {
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+.mono {
+    font-family: var(--font-mono);
+}
+
+/* Spacing between an eyebrow and the heading it introduces.
+   The display sizes use negative leading, so their ascenders sit high in the
+   line box and optically eat the gap — these need more room than the number
+   suggests. Kept here rather than as utilities on each page, so the rhythm is
+   defined once and cannot drift between pages. */
+.eyebrow + .display-xl { margin-top: 2.25rem; }
+.eyebrow + .display-l  { margin-top: 1.875rem; }
+.eyebrow + .heading    { margin-top: 1.25rem; }
+.eyebrow + .heading-sm { margin-top: 1rem; }
+
+/* And the sentence that follows a page title. */
+.display-xl + .lede { margin-top: 2.25rem; }
+.display-l + .lede  { margin-top: 1.875rem; }
+
+/* =========================================================
+   LINKS AND BUTTONS
+   ========================================================= */
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Underline grows from the left, 250ms. */
+.link-line {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 2px;
+}
+
+.link-line::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 250ms ease-out;
+}
+
+.link-line:hover::after,
+.link-line:focus-visible::after {
+    transform: scaleX(1);
+}
+
+/* Always-underlined variant for links inside running text. */
+.link-inline {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--color-line);
+    transition: text-decoration-color 250ms ease-out;
+}
+
+.link-inline:hover,
+.link-inline:focus-visible {
+    text-decoration-color: var(--accent);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.9375rem;
+    line-height: 1;
+    padding: 1rem 1.75rem;
+    border: 1px solid var(--color-ink);
+    border-radius: 0;
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    transition: background-color 250ms ease-out, color 250ms ease-out, border-color 250ms ease-out;
+    cursor: pointer;
+}
+
+.btn:hover,
+.btn:focus-visible {
+    background-color: transparent;
+    color: var(--color-ink);
+}
+
+.btn-quiet {
+    background-color: transparent;
+    color: var(--color-ink);
+    border-color: var(--color-line);
+}
+
+.btn-quiet:hover,
+.btn-quiet:focus-visible {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    border-color: var(--color-ink);
+}
+
+.on-ink .btn {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    border-color: var(--color-paper);
+}
+
+.on-ink .btn:hover,
+.on-ink .btn:focus-visible {
+    background-color: transparent;
+    color: var(--color-paper);
+}
+
+.on-ink .btn-quiet {
+    background-color: transparent;
+    color: var(--color-paper);
+    border-color: rgb(247 245 240 / 0.3);
+}
+
+.on-ink .btn-quiet:hover,
+.on-ink .btn-quiet:focus-visible {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    border-color: var(--color-paper);
+}
+
+/* The small arrow that trails a forward link. */
+.arrow {
+    display: inline-block;
+    transition: transform 250ms ease-out;
+}
+
+.group\/row:hover .arrow,
+a:hover .arrow,
+a:focus-visible .arrow {
+    transform: translateX(4px);
+}
+
+/* =========================================================
+   SURFACES
+   ========================================================= */
+
+.card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+}
+
+.figure {
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background-color: var(--color-surface);
+    box-shadow: 0 1px 2px rgb(27 26 23 / 0.04), 0 8px 24px rgb(27 26 23 / 0.05);
+}
+
+.on-ink .figure {
+    border-color: rgb(247 245 240 / 0.14);
+}
+
+/* =========================================================
+   COMPOSITION — the signature element
+   ========================================================= */
+
+.composition {
+    font-family: var(--font-mono);
+    display: grid;
+    gap: 0;
+    width: 100%;
+}
+
+.composition-row {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: 1rem;
+    align-items: baseline;
+    padding-block: 0.875rem;
+    border-top: 1px solid var(--color-line);
+}
+
+.composition-row:last-child {
+    border-bottom: 1px solid var(--color-line);
+}
+
+.on-ink .composition-row {
+    border-top-color: rgb(247 245 240 / 0.14);
+}
+
+.on-ink .composition-row:last-child {
+    border-bottom-color: rgb(247 245 240 / 0.14);
+}
+
+.composition-layer {
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--accent-text);
+}
+
+.composition-value {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+}
+
+@media (min-width: 768px) {
+    .composition-row {
+        grid-template-columns: 7rem 1fr;
+        gap: 1.5rem;
+    }
+
+    .composition-value {
+        font-size: 0.9375rem;
+    }
+}
+
+/* Layers arrive in order — top, then heart, then base — the way a scent
+   develops. This is the only sequenced animation on the site.
+   Gated behind .js so the layers are simply present without JavaScript. */
+.js .composition-staged .composition-row {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: composition-in 500ms ease-out forwards;
+}
+
+.js .composition-staged .composition-row:nth-child(1) { animation-delay: 120ms; }
+.js .composition-staged .composition-row:nth-child(2) { animation-delay: 240ms; }
+.js .composition-staged .composition-row:nth-child(3) { animation-delay: 360ms; }
+
+@keyframes composition-in {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================================
+   WORK ROWS
+   ========================================================= */
+
+.work-row {
+    display: block;
+    border-top: 1px solid var(--color-line);
+    padding-block: 2rem;
+    transition: border-color 250ms ease-out;
+}
+
+.work-row:last-of-type {
+    border-bottom: 1px solid var(--color-line);
+}
+
+.work-row:hover {
+    border-color: var(--accent);
+}
+
+/* The preview appears on hover where there is a pointer, and is simply always
+   there on touch, where hover does not exist.
+
+   On a pointer device it is taken out of the flow entirely and floated at the
+   right of the row. Transitioning its size instead (grid-template-rows,
+   height, margin) forces a full layout on every frame of the 400ms transition,
+   and because the row sits in a long document the whole page below it reflows
+   each time — which is what made the desktop feel sluggish while touch, where
+   none of this applies, stayed smooth. Out of flow, only opacity and transform
+   change, and both are composited. */
+.work-preview {
+    margin-top: 1.5rem;
+    opacity: 1;
+    transition: opacity 400ms ease-out;
+}
+
+.work-preview .figure {
+    transition: transform 400ms ease-out;
+}
+
+/* Also gated on width: below the twelve-column breakpoint the text runs the
+   full width of the row, so a floated preview would sit on top of it. */
+@media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
+
+    .work-row {
+        position: relative;
+    }
+
+    .work-preview {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: min(34%, 380px);
+        margin-top: 0;
+        transform: translateY(-50%);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .work-preview .figure {
+        transform: scale(0.98);
+    }
+
+    .work-row:hover .work-preview,
+    .work-row:focus-within .work-preview {
+        opacity: 1;
+    }
+
+    .work-row:hover .work-preview .figure,
+    .work-row:focus-within .work-preview .figure {
+        transform: scale(1.02);
+    }
+}
+
+/* A list row that is clickable as a whole without wrapping buttons inside a
+   link, which is invalid and unusable with a keyboard. The title carries the
+   accessible name, an overlay on it carries the hit area, and the row's own
+   buttons sit above that overlay. */
+.row-link {
+    position: relative;
+}
+
+.row-target::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+}
+
+/* =========================================================
+   FORMS
+   ========================================================= */
+
+.field-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--color-stone);
+    margin-bottom: 0.625rem;
+}
+
+.field {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-ink);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 0;
+    padding: 0.875rem 1rem;
+    transition: border-color 250ms ease-out;
+}
+
+.field:hover {
+    border-color: var(--color-stone);
+}
+
+.field:focus {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    border-color: var(--color-ink);
+}
+
+.field::placeholder {
+    color: var(--color-stone);
+    opacity: 1;
+}
+
+.field-error {
+    border-color: #8C2F2F;
+}
+
+.error-text {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #8C2F2F;
+    margin-top: 0.5rem;
+}
+
+.honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* =========================================================
+   SKIP LINK
+   ========================================================= */
+
+.skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -100%;
+    z-index: 100;
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    transition: top 150ms ease-out;
+}
+
+.skip-link:focus {
+    top: 1rem;
+}
+
+/* =========================================================
+   MOTION — reveal on scroll, once only
+   ========================================================= */
+
+/* Gated behind .js: without JavaScript nothing is ever hidden. */
+.js .reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 500ms ease-out, transform 500ms ease-out;
+}
+
+.js .reveal.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Nothing moves for a visitor who asked for less motion. Fades remain,
+   transforms do not. */
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .js .reveal,
+    .js .composition-staged .composition-row {
+        transform: none !important;
+    }
+
+    .work-preview .figure {
+        transform: none !important;
+    }
+
+    .arrow {
+        transform: none !important;
+    }
+}

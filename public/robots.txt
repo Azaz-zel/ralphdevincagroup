@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /inbox
+Disallow: /login
+
+Sitemap: http://ralphdevincagroup.test/sitemap.xml
