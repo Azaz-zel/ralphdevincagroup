@@ -77,6 +77,42 @@ If the mail step fails the message is already safe in the inbox and the visitor
 is still told it arrived, because from their side it did. Reversing steps 3 and 4
 would lose messages during an SMTP outage.
 
+## Speed
+
+Locally the first request after starting Laragon takes around a second: PHP's
+OPcache is empty and Laravel is reading all fourteen config files and
+registering every route from scratch. Every request after that is 40–170ms.
+
+That first-request cost belongs to development, not to visitors. On a
+deployment, run once after each release:
+
+```sh
+php artisan optimize        # caches config, routes, events and views
+```
+
+That takes the first request from ~1.3s to ~60ms and it stays there, because a
+real server does not restart between visits.
+
+**Do not leave that cached while developing.** With a cached config, `.env` is
+no longer read — which also means `phpunit.xml` cannot redirect the tests to an
+in-memory SQLite database, and `RefreshDatabase` would happily truncate the real
+MySQL one. Undo it with:
+
+```sh
+php artisan optimize:clear
+```
+
+## Fonts
+
+Faces are downloaded from bunny.net at build time and self-hosted, in WOFF2
+only. The Vite font plugin emits a second, separate `@font-face` per face for
+legacy WOFF; because they are two rules rather than one `src` list, browsers
+fetch both — and for some faces prefer the larger WOFF. `npm run build` removes
+them afterwards with `scripts/strip-legacy-fonts.mjs`.
+
+The `latin-ext` subset is required, not decorative: the four principles print
+*rād*, and U+0101 sits outside the latin subset.
+
 ## Tests
 
 ```sh
