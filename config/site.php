@@ -94,7 +94,9 @@ return [
         ],
         'work' => [
             'title' => 'Work — Ralph de Vinca Group',
-            'description' => 'Three projects across fragrance and software, with the decisions behind each one.',
+            // WorkController supplies the real description with the count derived;
+            // this is only the fallback if the page is ever rendered without it.
+            'description' => 'Projects across fragrance and software, with the decisions behind each one.',
             'image' => 'images/work/balicebelok.jpg',
         ],
         'contact' => [

@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Number;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class WorkController extends Controller
 {
     public function index(): View
     {
+        $projects = config('projects');
+
         return view('pages.work', [
-            'projects' => config('projects'),
+            'projects' => $projects,
+            // Counted rather than typed, so the description cannot outlive the
+            // number of projects it claims.
+            'metaDescription' => Str::ucfirst(Number::spell(count($projects)))
+                .' projects across fragrance and software, with the decisions behind each one.',
         ]);
     }
 

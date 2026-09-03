@@ -5,8 +5,9 @@
 | Work
 |--------------------------------------------------------------------------
 |
-| Three projects, and every case study is rendered from this array by one
-| template. Adding a fourth project means adding a fourth entry here.
+| Every case study is rendered from this array by one template, and the
+| counts shown on the home and work pages are derived from it. Adding a
+| project means adding one entry here and nothing else.
 |
 | `composition` is the signature element: the stack written in the grammar of
 | a perfume formula. Top is the layer a person feels directly, heart is the

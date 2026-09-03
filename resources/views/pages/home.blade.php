@@ -1,3 +1,6 @@
+@use('Illuminate\Support\Number')
+@use('Illuminate\Support\Str')
+
 <x-layout>
 
     {{-- 1 — Hero. The signature element of the site: the group written as one
@@ -53,9 +56,11 @@
     {{-- 3 — Selected work. A list, not a grid of cards. --}}
     <section class="shell section">
 
+        {{-- The count is derived, never typed: adding a project to
+             config/projects.php must never leave this sentence lying. --}}
         <x-section-heading
             eyebrow="Selected work"
-            title="Three things built so far."
+            :title="Str::ucfirst(Number::spell(count(config('projects')))).' things built so far.'"
             sub="All of them are here. Nothing is hidden, and nothing is padded."
         />
 

@@ -1,11 +1,14 @@
-<x-layout>
+@use('Illuminate\Support\Number')
+@use('Illuminate\Support\Str')
+
+<x-layout :description="$metaDescription ?? null">
 
     <section class="shell section">
         <div class="measure">
             <p class="eyebrow">Work</p>
             <h1 class="display-xl">Everything built so far.</h1>
             <p class="lede">
-                Three projects. All of them are here &mdash; this is not a selection.
+                {{ Str::ucfirst(Number::spell(count($projects ?? config('projects')))) }} projects. All of them are here &mdash; this is not a selection.
             </p>
         </div>
     </section>
