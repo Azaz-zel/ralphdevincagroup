@@ -31,7 +31,27 @@ that can read the inbox is created from the command line:
 php artisan admin:create
 ```
 
-Then sign in at `/login` and read messages at `/inbox`.
+Then sign in at `/login`. Messages are at `/inbox` and case studies at
+`/admin/projects`. Nothing on the public site links to either.
+
+In Docker, run the same command inside the container:
+
+```sh
+docker compose exec rdvgroup php artisan admin:create
+```
+
+## Deploying an update
+
+```sh
+git pull
+docker compose up -d --build
+docker compose exec rdvgroup php artisan migrate --force
+docker compose exec rdvgroup php artisan optimize
+```
+
+Screenshots uploaded in the admin are written to `storage/app/public/work`,
+which lives on the `rdv-storage` volume, so a rebuild keeps them. Back that
+volume up along with the database.
 
 ## Where the content lives
 
@@ -41,12 +61,13 @@ No page copy is written inside a Blade file if it is a fact about the business.
 |---|---|
 | `config/site.php` | Brand facts, email, outbound links, the four principles, the hero composition, per-route meta |
 | `config/divisions.php` | The two divisions and the accent colour each one is allowed to use |
-| `config/projects.php` | All three case studies end to end — situation, constraint, decisions, result, composition, images |
-| `config/images.php` | Intrinsic image dimensions, so nothing shifts while loading |
+| `projects` table | Every case study end to end: situation, constraint, decisions, result, composition, images. Edited at `/admin/projects` |
+| `config/images.php` | Intrinsic dimensions of the screenshots that ship with the repository, so nothing shifts while loading |
 
-Adding a fourth project means adding one entry to `config/projects.php`. The
-work index, the case study page, the home page list and the sitemap all pick it
-up with no further edits.
+Adding a project is done in the admin. The work index, the case study page, the
+home page list and the sitemap all pick it up with no further edits.
+`database/data/projects.php` only seeds the first three, once, when the
+migration runs.
 
 ## Structure
 
