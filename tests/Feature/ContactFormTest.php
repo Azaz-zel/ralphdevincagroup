@@ -164,7 +164,7 @@ class ContactFormTest extends TestCase
     {
         $response = $this->post(route('contact.store'), $this->payload(['message' => 'Too short.']));
 
-        $response->assertSessionHasErrors(['message' => 'Add a little more detail — a sentence or two is enough.']);
+        $response->assertSessionHasErrors(['message' => 'Add a little more detail. A sentence or two is enough.']);
         $this->assertDatabaseCount('inquiries', 0);
     }
 

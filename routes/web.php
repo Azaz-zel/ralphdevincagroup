@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\InboxController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WorkController;
 use Illuminate\Support\Facades\Route;
@@ -13,12 +14,12 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 | Page copy lives in the Blade views; every fact lives in config/site.php,
-| config/divisions.php and config/projects.php. Per-page meta is resolved by
+| config/divisions.php and the projects table. Per-page meta is resolved by
 | route name in the layout component, which is why these names matter.
 |
 */
 
-Route::view('/', 'pages.home')->name('home');
+Route::get('/', [WorkController::class, 'home'])->name('home');
 Route::view('/about', 'pages.about')->name('about');
 Route::view('/perfumery', 'pages.perfumery')->name('perfumery');
 Route::view('/technology', 'pages.technology')->name('technology');
@@ -47,7 +48,10 @@ Route::post('/contact', [ContactController::class, 'store'])
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'create'])->name('login');
-    Route::post('/login', [AuthController::class, 'store'])->name('login.store');
+    // Five tries a minute per address, so the one account cannot be guessed.
+    Route::post('/login', [AuthController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('login.store');
 });
 
 Route::middleware('auth')->group(function () {
@@ -56,4 +60,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/inbox', [InboxController::class, 'index'])->name('inbox');
     Route::get('/inbox/{inquiry}', [InboxController::class, 'show'])->name('inbox.show');
     Route::patch('/inbox/{inquiry}', [InboxController::class, 'update'])->name('inbox.update');
+
+    // Case studies. No show route: "View" opens the public page.
+    Route::resource('admin/projects', ProjectController::class)
+        ->except('show')
+        ->names('projects');
 });

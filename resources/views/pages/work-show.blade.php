@@ -1,160 +1,163 @@
+@use('App\Support\Screenshots')
+
 @php
-    $accent = config('divisions.'.$project['division'].'.accent', 'brass');
+    $images = $project->images ?? [];
+    $cover = $project->coverImage();
+    $rest = array_values(array_filter($images, fn (array $image) => $image['file'] !== ($cover['file'] ?? null)));
+    $nextCover = $next?->coverImage();
 @endphp
 
 <x-layout
-    :title="$project['title']"
-    :description="$project['description']"
-    :image="'images/work/'.$project['index_image']['file'].'.jpg'"
+    :title="$project->pageTitle()"
+    :description="$project->pageDescription()"
+    :image="$cover ? Screenshots::path($cover['file'], $cover['uploaded'] ?? false) : null"
 >
 
-    <div class="accent-{{ $accent }}">
+    <div class="accent-{{ $project->accent() }}">
 
-        {{-- 1 — Header --}}
+        {{-- Header --}}
+        <section class="shell section-open pb-14">
+
+            <div class="glow glow-light" style="width: 62rem; height: 50rem; left: 10%; top: -22rem" aria-hidden="true"></div>
+            <div class="glow glow-brass glow-drift" style="width: 56rem; height: 56rem; right: -19rem; top: -17rem" aria-hidden="true"></div>
+
+            <a href="{{ route('work') }}" class="text-link text-text-2">
+                <span class="arrow rotate-180" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 256 256"><path d="M40 128h176M144 56l72 72-72 72" fill="none" stroke="currentColor" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                All work
+            </a>
+
+            <h1 class="display-xl mt-8 max-w-[14ch]">{{ $project->name }}</h1>
+            <p class="lede measure mt-7">{{ $project->summary }}</p>
+
+            @if (! empty($project->facts))
+                <dl class="facts glass mt-10 max-w-3xl">
+                    @foreach ($project->facts as $fact)
+                        <div class="fact">
+                            <dt class="label">{{ $fact['label'] }}</dt>
+                            <dd class="m-0 mt-1.5">{{ $fact['value'] }}</dd>
+                        </div>
+                    @endforeach
+                </dl>
+            @endif
+
+        </section>
+
+        @if ($cover)
+            <section class="shell">
+                <x-figure
+                    :file="$cover['file']"
+                    :alt="$cover['alt']"
+                    :width="$cover['width'] ?? null"
+                    :height="$cover['height'] ?? null"
+                    :uploaded="$cover['uploaded'] ?? false"
+                    eager
+                />
+            </section>
+        @endif
+
+        {{-- The story, in the order it happened. The decisions get the most
+             room, because they are what separates a case study from a gallery. --}}
         <section class="shell section">
 
-            <div class="measure">
-                <p class="eyebrow">{{ $project['eyebrow'] }}</p>
-                <h1 class="display-xl">{{ $project['name'] }}</h1>
-                <p class="lede">{{ $project['summary'] }}</p>
+            <div class="glow glow-vinca glow-drift-slow" style="width: 44rem; height: 44rem; left: -20rem; top: 30%" aria-hidden="true"></div>
+
+            <div class="story reveal">
+                <h2 class="story-label heading">Situation</h2>
+                <div class="measure">
+                    @foreach ($project->paragraphs('situation') as $paragraph)
+                        <p class="body-text text-[1.0625rem]">{{ $paragraph }}</p>
+                    @endforeach
+                </div>
             </div>
 
-            <dl class="mt-14 grid gap-8 border-t border-line pt-8 sm:grid-cols-3">
-                @foreach ($project['meta'] as $item)
-                    <div>
-                        <dt class="label">{{ $item['label'] }}</dt>
-                        <dd class="small m-0 mt-2">{{ $item['value'] }}</dd>
+            @if ($project->paragraphs('constraint'))
+                <div class="story reveal">
+                    <h2 class="story-label heading">Constraint</h2>
+                    <div class="measure">
+                        @foreach ($project->paragraphs('constraint') as $paragraph)
+                            <p class="body-text text-[1.0625rem]">{{ $paragraph }}</p>
+                        @endforeach
                     </div>
-                @endforeach
-            </dl>
-
-        </section>
-
-        {{-- 2 — The situation --}}
-        <section class="shell section">
-            <div class="grid gap-10 md:grid-cols-12 md:gap-8">
-                <div class="md:col-span-4">
-                    <x-section-heading title="The situation" size="heading" />
                 </div>
-                <div class="measure reveal md:col-span-8">
-                    @foreach ($project['situation'] as $paragraph)
-                        <p class="body-text">{{ $paragraph }}</p>
+            @endif
+
+            <div class="story reveal">
+                <h2 class="story-label heading">Decisions</h2>
+                <div class="glass rounded-[32px] p-1.5">
+                    @foreach ($project->decisions as $decision)
+                        <div class="decision">
+                            <h3 class="decision-title">{{ $decision['title'] }}</h3>
+                            <p class="body-text">{{ $decision['body'] }}</p>
+                        </div>
                     @endforeach
                 </div>
             </div>
-        </section>
 
-        <div class="shell">
-            <hr class="rule">
-        </div>
-
-        {{-- 3 — The constraint --}}
-        <section class="shell section">
-            <div class="grid gap-10 md:grid-cols-12 md:gap-8">
-                <div class="md:col-span-4">
-                    <x-section-heading title="The constraint" size="heading" />
-                </div>
-                <div class="measure reveal md:col-span-8">
-                    @foreach ($project['constraint'] as $paragraph)
-                        <p class="body-text">{{ $paragraph }}</p>
+            <div class="story reveal">
+                <h2 class="story-label heading">Result</h2>
+                <div class="measure">
+                    @foreach ($project->paragraphs('result') as $paragraph)
+                        <p class="body-text text-[1.0625rem]">{{ $paragraph }}</p>
                     @endforeach
                 </div>
             </div>
-        </section>
-
-        <div class="shell">
-            <hr class="rule">
-        </div>
-
-        {{-- 4 — The decisions. This is what separates a case study from a
-             gallery, so it gets the most room on the page. --}}
-        <section class="shell section">
-
-            <x-section-heading eyebrow="The decisions" title="What was decided, and why." />
-
-            <div class="mt-14">
-                @foreach ($project['decisions'] as $decision)
-                    <div class="reveal grid gap-4 border-t border-line py-9 md:grid-cols-12 md:gap-8 @if ($loop->last) border-b @endif">
-                        <span class="mono text-[0.6875rem] uppercase tracking-[0.25em] text-[var(--accent-text)] md:col-span-1">
-                            {{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}
-                        </span>
-                        <h3 class="heading md:col-span-5">{{ $decision['title'] }}</h3>
-                        <p class="body-text muted measure md:col-span-6">{{ $decision['body'] }}</p>
-                    </div>
-                @endforeach
-            </div>
 
         </section>
 
-        {{-- 5 — The result --}}
-        <section class="shell section">
-            <div class="grid gap-10 md:grid-cols-12 md:gap-8">
-                <div class="md:col-span-4">
-                    <x-section-heading title="The result" size="heading" />
-                </div>
-                <div class="measure reveal md:col-span-8">
-                    @foreach ($project['result'] as $paragraph)
-                        <p class="body-text">{{ $paragraph }}</p>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-
-        <div class="shell">
-            <hr class="rule">
-        </div>
-
-        {{-- 6 — Composition: the stack written the way a formula is. --}}
-        <section class="shell section">
-            <div class="grid gap-10 md:grid-cols-12 md:gap-8">
-                <div class="md:col-span-4">
-                    <x-section-heading title="Composition" size="heading" />
-                </div>
-                <div class="reveal md:col-span-8">
-                    <x-composition :layers="$project['composition']" :note="$project['composition_note']" />
-                </div>
-            </div>
-        </section>
-
-        {{-- 7 — Screenshots --}}
-        <section class="shell section-tight">
-            <div class="flex flex-col gap-8">
-                @foreach ($project['images'] as $image)
+        @if ($rest)
+            <section class="shell flex flex-col gap-8">
+                @foreach ($rest as $image)
                     <x-figure
                         :file="$image['file']"
                         :alt="$image['alt']"
-                        :eager="$loop->first"
+                        :width="$image['width'] ?? null"
+                        :height="$image['height'] ?? null"
+                        :uploaded="$image['uploaded'] ?? false"
                         class="reveal"
                     />
                 @endforeach
-            </div>
-        </section>
+            </section>
+        @endif
 
-        {{-- 8 — On to the next one --}}
+        {{-- Composition: the stack written the way a formula is. --}}
         <section class="shell section">
-
-            <div class="border-t border-line pt-10">
-
-                <div class="flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
-
-                    <a href="{{ route('work.show', $next['slug']) }}" class="group/row block">
-                        <span class="label">Next work</span>
-                        <span class="heading mt-3 block">{{ $next['name'] }}</span>
-                        <span class="mono mt-3 inline-flex items-center gap-2 text-[0.6875rem] uppercase tracking-[0.25em] text-stone">
-                            {{ $next['meta_label'] }}
-                            <span class="arrow" aria-hidden="true">&rarr;</span>
-                        </span>
-                    </a>
-
-                    <a href="{{ route('work') }}" class="link-line mono shrink-0 text-[0.6875rem] uppercase tracking-[0.25em] text-stone">
-                        All work
-                    </a>
-
+            <div class="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+                <div class="reveal flex flex-col gap-5 lg:col-span-6">
+                    <h2 class="display-l">What it is made of.</h2>
+                    <p class="body-text measure-narrow">Top is the layer a person feels directly. Heart is the logic working underneath. Base is the foundation that outlasts everything above it.</p>
                 </div>
-
+                <div class="reveal mx-auto w-full max-w-[29rem] lg:col-span-5 lg:col-start-8">
+                    <x-composition :layers="$project->composition()" label="The stack, written as a perfume formula" />
+                </div>
             </div>
-
         </section>
+
+        {{-- On to the next one --}}
+        @if ($next)
+            <section class="shell pb-[var(--section-space)]">
+                <a href="{{ route('work.show', $next) }}" class="next-case glass reveal">
+                    <span class="flex flex-col gap-4">
+                        <span class="label">Next case study</span>
+                        <span class="display-l">{{ $next->name }}</span>
+                        <span class="body-text">{{ $next->summary }}</span>
+                        <span class="text-link">
+                            Read it
+                            <span class="arrow" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 256 256"><path d="M40 128h176M144 56l72 72-72 72" fill="none" stroke="currentColor" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                        </span>
+                    </span>
+                    @if ($nextCover)
+                        <x-picture
+                            :file="$nextCover['file']"
+                            alt=""
+                            :width="$nextCover['width'] ?? null"
+                            :height="$nextCover['height'] ?? null"
+                            :uploaded="$nextCover['uploaded'] ?? false"
+                            sizes="(min-width: 1024px) 560px, 100vw"
+                        />
+                    @endif
+                </a>
+            </section>
+        @endif
 
     </div>
 

@@ -1,12 +1,11 @@
-<x-layout :title="'Sign in — '.config('site.name')" description="Sign in to read messages sent through this site.">
+<x-layout :title="'Sign in | '.config('site.name')" description="Sign in to read messages sent through this site.">
 
     <section class="shell section">
 
         <div class="mx-auto w-full max-w-md">
 
-            <div class="card p-8 md:p-10">
+            <div class="card glass p-8 md:p-10">
 
-                <p class="eyebrow">Inbox</p>
 
                 <h1 class="heading">Sign in</h1>
 
@@ -50,10 +49,10 @@
                             @enderror
                         </div>
 
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" id="remember" name="remember" value="1" class="size-4 accent-[#1B1A17]">
-                            <label for="remember" class="small">Remember me</label>
-                        </div>
+                        <label for="remember" class="small flex min-h-11 cursor-pointer items-center gap-3">
+                            <input type="checkbox" id="remember" name="remember" value="1" class="size-4">
+                            Remember me
+                        </label>
 
                         <div>
                             <button type="submit" class="btn w-full">Sign in</button>

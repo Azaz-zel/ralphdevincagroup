@@ -55,6 +55,29 @@ class InboxTest extends TestCase
         $this->assertFalse(app('router')->has('register'));
     }
 
+    public function test_signing_in_is_limited_to_five_tries_a_minute(): void
+    {
+        $this->owner();
+
+        foreach (range(1, 5) as $attempt) {
+            $this->post(route('login.store'), ['email' => 'owner@example.com', 'password' => 'wrong'])
+                ->assertSessionHasErrors('email');
+        }
+
+        $this->post(route('login.store'), ['email' => 'owner@example.com', 'password' => 'a-long-enough-password'])
+            ->assertTooManyRequests();
+
+        $this->assertGuest();
+    }
+
+    public function test_every_page_carries_the_security_headers(): void
+    {
+        $this->get(route('home'))
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
+            ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    }
+
     public function test_the_owner_sees_the_list_and_the_number_of_new_messages(): void
     {
         $this->inquiry();

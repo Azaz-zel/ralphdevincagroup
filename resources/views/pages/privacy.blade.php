@@ -6,7 +6,6 @@
 
     <section class="shell section">
         <div class="measure">
-            <p class="eyebrow">Privacy</p>
             <h1 class="display-xl">What happens to your information.</h1>
             <p class="lede">
                 This page covers the only information this site collects.

@@ -38,7 +38,6 @@
     {{-- Page header --}}
     <section class="shell section">
         <div class="measure">
-            <p class="eyebrow">The group</p>
             <h1 class="display-xl">Wisdom that binds, and endures.</h1>
         </div>
     </section>
@@ -47,13 +46,13 @@
         <hr class="rule">
     </div>
 
-    {{-- 1 — The name --}}
+    {{-- 1. The name --}}
     <section id="the-name" class="shell section">
 
         <div class="grid gap-10 md:grid-cols-12 md:gap-8">
 
             <div class="md:col-span-4">
-                <x-section-heading eyebrow="01" title="The name" size="heading" />
+                <x-section-heading title="The name" size="heading" />
             </div>
 
             <div class="md:col-span-8">
@@ -85,13 +84,13 @@
         <hr class="rule">
     </div>
 
-    {{-- 2 — What this is built on --}}
+    {{-- 2. What this is built on --}}
     <section id="what-this-is-built-on" class="shell section">
 
         <div class="grid gap-10 md:grid-cols-12 md:gap-8">
 
             <div class="md:col-span-4">
-                <x-section-heading eyebrow="02" title="What this is built on" size="heading" />
+                <x-section-heading title="What this is built on" size="heading" />
             </div>
 
             <div class="measure reveal md:col-span-8">
@@ -122,19 +121,19 @@
         <hr class="rule">
     </div>
 
-    {{-- 3 — How it happened --}}
+    {{-- 3. How it happened --}}
     <section id="how-it-happened" class="shell section">
 
         <div class="grid gap-10 md:grid-cols-12 md:gap-8">
 
             <div class="md:col-span-4">
-                <x-section-heading eyebrow="03" title="How it happened" size="heading" />
+                <x-section-heading title="How it happened" size="heading" />
             </div>
 
             <div class="measure reveal md:col-span-8">
 
                 <p class="body-text">
-                    The name was chosen while changing a username in a game. It was picked because it sounded French &mdash; like something with a long history, at a point when it had no history at all.
+                    The name was chosen while changing a username in a game. It was picked because it sounded French, like something with a long history, at a point when it had no history at all.
                 </p>
 
                 <p class="body-text">
@@ -142,11 +141,11 @@
                 </p>
 
                 <p class="body-text">
-                    <strong>The first substance came from an interest.</strong> Ralph de Vinca Perfumery was built not as a shop but as a place to understand scent &mdash; the structure of notes, the houses, the way a composition unfolds on skin. A project born from a hobby, built to a standard nobody was asking for.
+                    <strong>The first substance came from an interest.</strong> Ralph de Vinca Perfumery was built not as a shop but as a place to understand scent: the structure of notes, the houses, the way a composition unfolds on skin. A project born from a hobby, built to a standard nobody was asking for.
                 </p>
 
                 <p class="body-text">
-                    <strong>The second came from outside.</strong> An uncle asked for a website for his business, and Bali Cebelok Gesiuh followed &mdash; a booking platform for a traditional coconut oil experience passed down through generations. For the first time, the name was used to solve someone else&rsquo;s problem.
+                    <strong>The second came from outside.</strong> An uncle asked for a website for his business, and Bali Cebelok Gesiuh followed: a booking platform for a traditional coconut oil experience passed down through generations. For the first time, the name was used to solve someone else&rsquo;s problem.
                 </p>
 
                 <p class="body-text">
@@ -154,7 +153,7 @@
                 </p>
 
                 <p class="body-text">
-                    The three look unrelated &mdash; fragrance, tourism, a campus system. The pattern is clear from a distance: all three are invisible structures that change how people experience something.
+                    The three look unrelated: fragrance, tourism, a campus system. The pattern is clear from a distance: all three are invisible structures that change how people experience something.
                 </p>
 
                 <p class="body-text">
@@ -162,7 +161,7 @@
                 </p>
 
                 <p class="body-text">
-                    One detail is worth keeping. Perfumery was built first, and paid work arrived afterward. The work came because the hobby was taken seriously &mdash; not the other way around.
+                    One detail is worth keeping. Perfumery was built first, and paid work arrived afterward. The work came because the hobby was taken seriously, not the other way around.
                 </p>
 
             </div>
@@ -175,21 +174,21 @@
         <hr class="rule">
     </div>
 
-    {{-- 4 — Four principles. Rendered from config so this page and the home
+    {{-- 4. Four principles. Rendered from config so this page and the home
          page can never drift apart. --}}
     <section id="four-principles" class="shell section">
 
         <div class="grid gap-10 md:grid-cols-12 md:gap-8">
 
             <div class="md:col-span-4">
-                <x-section-heading eyebrow="04" title="Four principles" size="heading" />
+                <x-section-heading title="Four principles" size="heading" />
             </div>
 
             <div class="md:col-span-8">
 
-                <div class="grid gap-px bg-line sm:grid-cols-2">
+                <div class="glass grid overflow-hidden rounded-[28px] sm:grid-cols-2">
                     @foreach (config('site.principles') as $principle)
-                        <div class="reveal bg-paper p-8">
+                        <div class="reveal border-line p-8 not-first:border-t sm:nth-2:border-t-0 sm:even:border-l">
                             <h3 class="heading-sm">{{ $principle['name'] }}</h3>
                             <p class="body-text muted mt-4">{!! $principle['body'] !!}</p>
                         </div>
@@ -206,13 +205,13 @@
         <hr class="rule">
     </div>
 
-    {{-- 5 — The founder --}}
+    {{-- 5. The founder --}}
     <section id="the-founder" class="shell section">
 
         <div class="grid gap-10 md:grid-cols-12 md:gap-8">
 
             <div class="md:col-span-4">
-                <x-section-heading eyebrow="05" title="The founder" size="heading" />
+                <x-section-heading title="The founder" size="heading" />
             </div>
 
             <div class="measure reveal md:col-span-8">
@@ -251,14 +250,14 @@
         <hr class="rule">
     </div>
 
-    {{-- 6 — Editorial commitment. The PRD is explicit that this is a
+    {{-- 6. Editorial commitment. The PRD is explicit that this is a
          differentiator and must not be buried. --}}
     <section id="editorial-commitment" class="shell section">
 
         <div class="grid gap-10 md:grid-cols-12 md:gap-8">
 
             <div class="md:col-span-4">
-                <x-section-heading eyebrow="06" title="Editorial commitment" size="heading" />
+                <x-section-heading title="Editorial commitment" size="heading" />
             </div>
 
             <div class="md:col-span-8">

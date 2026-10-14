@@ -7,7 +7,6 @@
         <div class="grid gap-10 lg:grid-cols-12 lg:gap-16">
 
             <div class="measure lg:col-span-8">
-                <p class="eyebrow">Contact</p>
                 <h1 class="display-xl">Start a project.</h1>
                 <p class="lede">
                     Tell me what the problem is, rather than what you think the solution should be. The problem is usually the more useful half.
@@ -36,7 +35,7 @@
 
     <section class="shell section-tight">
 
-        <div class="grid gap-14 border-t border-line pt-14 lg:grid-cols-12 lg:gap-16">
+        <div class="grid gap-14 pt-6 lg:grid-cols-12 lg:gap-16">
 
             {{-- What happens after the message is sent. --}}
             <div class="lg:col-span-5">
@@ -62,10 +61,10 @@
             {{-- The one form on the site. --}}
             <div class="lg:col-span-7">
 
-                <div id="form" class="card p-8 md:p-10">
+                <div id="form" class="card glass p-6 md:p-10">
 
                     @if (session('status') === 'sent')
-                        <div role="status" class="mb-8 border-l-2 border-[var(--accent)] bg-paper p-5">
+                        <div role="status" class="notice mb-8">
                             <p class="body-text m-0">
                                 <strong>Message sent.</strong> You&rsquo;ll get a reply within two working days.
                             </p>
@@ -73,7 +72,7 @@
                     @endif
 
                     @if (session('status') === 'failed')
-                        <div role="alert" class="mb-8 border-l-2 border-[#8C2F2F] bg-paper p-5">
+                        <div role="alert" class="notice notice-error mb-8">
                             <p class="body-text m-0">
                                 The message couldn&rsquo;t be sent. Try again in a moment, or email
                                 <a href="mailto:{{ config('site.email') }}" class="link-inline">{{ config('site.email') }}</a>

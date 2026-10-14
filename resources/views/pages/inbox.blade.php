@@ -8,28 +8,22 @@
     ];
 @endphp
 
-<x-layout :title="'Inbox — '.config('site.name')" description="Messages sent through this site.">
+<x-layout :title="'Inbox | '.config('site.name')" description="Messages sent through this site." admin>
 
     <section class="shell pt-12 pb-20 md:pt-16">
 
         <div class="flex flex-wrap items-start justify-between gap-6">
 
             <div>
-                <p class="eyebrow">Inbox</p>
                 <h1 class="display-l">
                     {{ $newCount > 0 ? $newCount.' new '.Str::plural('message', $newCount) : 'No new messages' }}
                 </h1>
             </div>
 
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-quiet">Sign out</button>
-            </form>
-
         </div>
 
         @if (session('status'))
-            <p role="status" class="small mt-8 border-l-2 border-[var(--accent)] bg-surface px-5 py-4">
+            <p role="status" class="notice mt-8">
                 {{ session('status') }}
             </p>
         @endif
@@ -84,7 +78,7 @@
                 {{-- The row is a container, not a link: it holds one link and
                      real buttons, and a link may not contain a button. The
                      title link is stretched over the row instead. --}}
-                <div class="row-link group/row relative border-t border-line py-4 transition-colors hover:border-[var(--accent)] {{ $loop->last ? 'border-b' : '' }} {{ $isArchived ? 'opacity-60' : '' }}">
+                <div class="row-link group/row relative border-t border-line py-4 transition-colors hover:border-[var(--accent)] {{ $loop->last ? 'border-b' : '' }}">
 
                     <div class="flex flex-col gap-2 lg:flex-row lg:items-baseline lg:gap-6">
 

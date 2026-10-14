@@ -3,42 +3,22 @@
     'alt' => '',
     'eager' => false,
     'caption' => null,
+    'width' => null,
+    'height' => null,
+    'uploaded' => false,
     // How wide this image actually renders, so the browser can pick the
     // smallest file that still looks right.
-    'sizes' => '(min-width: 1280px) 1024px, (min-width: 768px) 80vw, 100vw',
+    'sizes' => '(min-width: 1280px) 1152px, 100vw',
 ])
 
-@php
-    [$width, $height] = config('images.'.$file, [1600, 800]);
+{{-- A screenshot held in a pane of glass. --}}
 
-    $widths = [800, 1200, 1600];
+<figure {{ $attributes->merge(['class' => 'figure glass']) }}>
 
-    $srcset = fn (string $extension) => collect($widths)
-        ->map(fn (int $w) => asset("images/work/{$file}-{$w}w.{$extension}")." {$w}w")
-        ->implode(', ');
-@endphp
-
-{{-- WebP first, with JPEG kept as a fallback for anything that cannot read it. --}}
-
-<figure {{ $attributes->merge(['class' => 'figure']) }}>
-
-    <picture>
-        <source type="image/webp" srcset="{{ $srcset('webp') }}" sizes="{{ $sizes }}">
-        <source type="image/jpeg" srcset="{{ $srcset('jpg') }}" sizes="{{ $sizes }}">
-        <img
-            src="{{ asset('images/work/'.$file.'.jpg') }}"
-            alt="{{ $alt }}"
-            width="{{ $width }}"
-            height="{{ $height }}"
-            class="w-full"
-            loading="{{ $eager ? 'eager' : 'lazy' }}"
-            decoding="{{ $eager ? 'sync' : 'async' }}"
-            @if ($eager) fetchpriority="high" @endif
-        >
-    </picture>
+    <x-picture :file="$file" :alt="$alt" :eager="$eager" :sizes="$sizes" :width="$width" :height="$height" :uploaded="$uploaded" />
 
     @if ($caption)
-        <figcaption class="small muted border-t border-line px-5 py-4">{{ $caption }}</figcaption>
+        <figcaption class="small muted">{{ $caption }}</figcaption>
     @endif
 
 </figure>

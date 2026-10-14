@@ -19,7 +19,7 @@ class InquiryReceived extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "New inquiry — {$this->inquiry->name} ({$this->inquiry->divisionLabel()})",
+            subject: "New inquiry: {$this->inquiry->name} ({$this->inquiry->divisionLabel()})",
             replyTo: [new Address($this->inquiry->email, $this->inquiry->name)],
         );
     }

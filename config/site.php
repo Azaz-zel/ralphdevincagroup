@@ -64,7 +64,7 @@ return [
     */
     'composition' => [
         ['layer' => 'TOP', 'value' => 'Perfumery · Technology'],
-        ['layer' => 'HEART', 'value' => 'Composition · Precision · Binding · Endurance'],
+        ['layer' => 'HEART', 'value' => 'Composition, Precision, Binding, Endurance'],
         ['layer' => 'BASE', 'value' => 'Things that are not seen, but felt'],
     ],
 
@@ -73,44 +73,51 @@ return [
     */
     'meta' => [
         'home' => [
-            'title' => 'Ralph de Vinca Group — Fragrance and software, built in Bali',
+            'title' => 'Ralph de Vinca Group | Fragrance and software, built in Bali',
             'description' => 'An independent group with two divisions: a fragrance platform and a software practice. Both build things that are not seen, but felt.',
             'image' => 'images/work/ralph-home.jpg',
         ],
         'about' => [
-            'title' => 'The Group — Ralph de Vinca',
+            'title' => 'The Group | Ralph de Vinca',
             'description' => 'The name, the thinking behind it, and how a group that covers fragrance and software came to exist.',
             'image' => 'images/work/ralph-home.jpg',
         ],
         'perfumery' => [
-            'title' => 'Perfumery — Ralph de Vinca Group',
+            'title' => 'Perfumery | Ralph de Vinca Group',
             'description' => 'A platform for understanding fragrance: houses, notes, and how a composition unfolds. Explained rather than sold.',
             'image' => 'images/work/ralph-detail.jpg',
         ],
         'technology' => [
-            'title' => 'Technology — Ralph de Vinca Group',
+            'title' => 'Technology | Ralph de Vinca Group',
             'description' => 'Websites and internal systems for businesses and institutions in Bali, built so the decisions hold.',
             'image' => 'images/work/absensi-mahasiswa.jpg',
         ],
         'work' => [
-            'title' => 'Work — Ralph de Vinca Group',
+            'title' => 'Work | Ralph de Vinca Group',
             // WorkController supplies the real description with the count derived;
             // this is only the fallback if the page is ever rendered without it.
             'description' => 'Projects across fragrance and software, with the decisions behind each one.',
             'image' => 'images/work/balicebelok.jpg',
         ],
         'contact' => [
-            'title' => 'Contact — Ralph de Vinca Group',
+            'title' => 'Contact | Ralph de Vinca Group',
             'description' => 'Describe the problem and get a direct reply within two working days.',
             'image' => 'images/work/ralph-home.jpg',
         ],
         'privacy' => [
-            'title' => 'Privacy — Ralph de Vinca Group',
+            'title' => 'Privacy | Ralph de Vinca Group',
             'description' => 'What this site collects, why, and how to have it removed.',
             'image' => 'images/work/ralph-home.jpg',
         ],
     ],
 
     'privacy_updated' => 'September 2026',
+
+    /*
+    | Words from real clients, shown on the home page. The block stays hidden
+    | while this is empty: a quote is only ever added once it was really said.
+    | Each entry: ['quote' => '...', 'name' => '...', 'role' => '...', 'project' => '...'].
+    */
+    'testimonials' => [],
 
 ];

@@ -2,12 +2,12 @@
 
 /*
 |--------------------------------------------------------------------------
-| Work
+| Seed data for the projects table
 |--------------------------------------------------------------------------
 |
-| Every case study is rendered from this array by one template, and the
-| counts shown on the home and work pages are derived from it. Adding a
-| project means adding one entry here and nothing else.
+| Read once, by the migration that creates the projects table. After that the
+| projects live in the database and are edited at /admin/projects; changing
+| this file does nothing to a site that has already been migrated.
 |
 | `composition` is the signature element: the stack written in the grammar of
 | a perfume formula. Top is the layer a person feels directly, heart is the
@@ -22,7 +22,6 @@ return [
         'number' => '01',
         'name' => 'Ralph de Vinca Perfumery',
         'division' => 'perfumery',
-        'eyebrow' => '01 — Perfumery',
         'summary' => 'A fragrance platform built before anyone asked for it.',
         'index_summary' => 'A fragrance platform built before anyone asked for it.',
         'meta_label' => 'Perfumery',
@@ -41,7 +40,7 @@ return [
         'decisions' => [
             [
                 'title' => 'Structure before volume.',
-                'body' => 'The data model for houses, fragrances, and notes was designed first, and content was added into it afterward. The opposite order — writing pages and normalising later — is why most sites like this never grow past a few dozen entries.',
+                'body' => 'The data model for houses, fragrances, and notes was designed first, and content was added into it afterward. The opposite order (writing pages and normalising later) is why most sites like this never grow past a few dozen entries.',
             ],
             [
                 'title' => 'No rankings.',
@@ -54,14 +53,13 @@ return [
         ],
         'result' => [
             'A working platform covering houses, fragrances, and notes, with a separate education section. It has no revenue and was never intended to have any yet.',
-            'What it produced instead is the standard everything else in the group is measured against — and, indirectly, the work that came after it.',
+            'What it produced instead is the standard everything else in the group is measured against, and indirectly the work that came after it.',
         ],
         'composition' => [
             ['layer' => 'TOP', 'value' => 'Blade · Tailwind CSS'],
             ['layer' => 'HEART', 'value' => 'Laravel · PHP'],
             ['layer' => 'BASE', 'value' => 'MySQL'],
         ],
-        'composition_note' => 'Top is the layer a person feels directly. Heart is the logic working underneath. Base is the foundation that outlasts everything above it.',
         'images' => [
             [
                 'file' => 'ralph-home',
@@ -72,11 +70,6 @@ return [
                 'alt' => 'The Ralph de Vinca Perfumery platform explaining why fragrance is worth understanding, beside the raw materials a composition is built from.',
             ],
         ],
-        'index_image' => [
-            'file' => 'ralph-home',
-            'alt' => 'Home page of the Ralph de Vinca Perfumery platform.',
-        ],
-        'title' => 'Ralph de Vinca Perfumery — Work',
         'description' => 'A fragrance platform built with no client and no deadline, and the decisions that kept it in scope.',
     ],
 
@@ -85,7 +78,6 @@ return [
         'number' => '02',
         'name' => 'Bali Cebelok Gesiuh',
         'division' => 'technology',
-        'eyebrow' => '02 — Technology',
         'summary' => 'A booking platform for a traditional coconut oil experience.',
         'index_summary' => 'A booking platform for a traditional coconut oil experience. The first paid work.',
         'meta_label' => 'Technology · Two weeks',
@@ -122,7 +114,6 @@ return [
             ['layer' => 'HEART', 'value' => 'Laravel · PHP'],
             ['layer' => 'BASE', 'value' => 'MySQL'],
         ],
-        'composition_note' => 'Top is the layer a person feels directly. Heart is the logic working underneath. Base is the foundation that outlasts everything above it.',
         'images' => [
             [
                 'file' => 'balicebelok',
@@ -133,11 +124,6 @@ return [
                 'alt' => 'The story section of Bali Cebelok Gesiuh, introducing the family whose tradition the experience comes from.',
             ],
         ],
-        'index_image' => [
-            'file' => 'balicebelok',
-            'alt' => 'Bali Cebelok Gesiuh home page.',
-        ],
-        'title' => 'Bali Cebelok Gesiuh — Work',
         'description' => 'A booking platform for a traditional Balinese coconut oil experience, delivered in two weeks.',
     ],
 
@@ -146,7 +132,6 @@ return [
         'number' => '03',
         'name' => 'PKKMB INSTIKI 2026',
         'division' => 'technology',
-        'eyebrow' => '03 — Technology',
         'summary' => 'A centralised attendance system for a campus orientation.',
         'index_summary' => 'An attendance system for a campus orientation, built in the time that was left.',
         'meta_label' => 'Technology · One week',
@@ -187,18 +172,12 @@ return [
             ['layer' => 'HEART', 'value' => 'Laravel · PHP'],
             ['layer' => 'BASE', 'value' => 'MySQL'],
         ],
-        'composition_note' => 'Top is the layer a person feels directly. Heart is the logic working underneath. Base is the foundation that outlasts everything above it.',
         'images' => [
             [
                 'file' => 'absensi-mahasiswa',
                 'alt' => 'An attendance session in the PKKMB INSTIKI 2026 system, listing one class for live marking. Student names and ID numbers are obscured.',
             ],
         ],
-        'index_image' => [
-            'file' => 'absensi-mahasiswa',
-            'alt' => 'An attendance session in the PKKMB INSTIKI 2026 system, with student names and ID numbers obscured.',
-        ],
-        'title' => 'PKKMB INSTIKI 2026 — Work',
         'description' => 'A centralised attendance system for a campus orientation, built in the fifteen days available.',
     ],
 

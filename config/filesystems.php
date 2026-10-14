@@ -47,6 +47,20 @@ return [
             'report' => false,
         ],
 
+        // Screenshots uploaded in the admin. Kept under storage/app, which is
+        // the persistent volume in docker-compose.yml: anything written into
+        // public/ would be lost with the container on the next deploy. Served
+        // through the public/storage link. The screenshots that ship with the
+        // repository stay in public/images/work.
+        'work' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/work'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage/work',
+            'visibility' => 'public',
+            'throw' => true,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

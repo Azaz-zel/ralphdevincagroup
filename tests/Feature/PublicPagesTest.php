@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -24,8 +25,8 @@ class PublicPagesTest extends TestCase
             route('privacy'),
         ];
 
-        foreach (config('projects') as $project) {
-            $urls[] = route('work.show', $project['slug']);
+        foreach (Project::ordered()->get() as $project) {
+            $urls[] = route('work.show', $project);
         }
 
         return $urls;
@@ -99,8 +100,8 @@ class PublicPagesTest extends TestCase
     {
         $this->get(route('home'))->assertSee('HEART');
 
-        foreach (config('projects') as $project) {
-            $this->get(route('work.show', $project['slug']))
+        foreach (Project::ordered()->get() as $project) {
+            $this->get(route('work.show', $project))
                 ->assertSee('TOP')
                 ->assertSee('HEART')
                 ->assertSee('BASE');
@@ -112,16 +113,20 @@ class PublicPagesTest extends TestCase
      */
     public function test_every_case_study_explains_at_least_three_decisions(): void
     {
-        foreach (config('projects') as $project) {
+        $projects = Project::ordered()->get();
+
+        $this->assertCount(3, $projects, 'The migration should bring the three existing case studies across.');
+
+        foreach ($projects as $project) {
             $this->assertGreaterThanOrEqual(
                 3,
-                count($project['decisions']),
-                "{$project['slug']} has fewer than three decisions",
+                count($project->decisions),
+                "{$project->slug} has fewer than three decisions",
             );
 
-            $response = $this->get(route('work.show', $project['slug']))->assertOk();
+            $response = $this->get(route('work.show', $project))->assertOk();
 
-            foreach ($project['decisions'] as $decision) {
+            foreach ($project->decisions as $decision) {
                 $response->assertSeeText($decision['title']);
             }
         }

@@ -11,10 +11,10 @@ export default defineConfig({
             // Self-hosted through bunny.net so no request ever leaves for a font CDN.
             //
             // Only weights the stylesheet actually asks for are downloaded: the
-            // display face is used at 400 everywhere, and the 500 and 600 in the
-            // CSS belong to Inter Tight (buttons and small headings), not to
-            // Newsreader. Preloading is limited to the three faces needed for
-            // the first paint, so the rest do not compete with it.
+            // display face is used at 300 for page titles and 400 for smaller
+            // headings, with italic 300 for the one emphasised word in a title.
+            // The 500 and 600 in the CSS belong to Inter Tight (buttons and
+            // small headings), not to Newsreader.
             //
             // latin-ext is not optional here: the four principles print
             // "rād", and U+0101 sits outside the latin subset. Without it
@@ -22,7 +22,9 @@ export default defineConfig({
             fonts: [
                 // Display — page titles and section headlines.
                 bunny('Newsreader', {
-                    weights: [400],
+                    weights: [300, 400],
+                    styles: ['normal', 'italic'],
+                    preload: [{ weight: 300 }],
                     subsets: ['latin', 'latin-ext'],
                     fallbacks: ['Georgia', 'serif'],
                 }),

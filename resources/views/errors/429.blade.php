@@ -1,10 +1,9 @@
-<x-layout :title="'Too many messages — '.config('site.name')" description="The contact form has a rate limit to keep automated submissions out.">
+<x-layout :title="'Too many messages | '.config('site.name')" description="The contact form has a rate limit to keep automated submissions out.">
 
     <section class="shell section">
 
         <div class="measure py-10 md:py-20">
 
-            <p class="eyebrow">429</p>
 
             <h1 class="display-l">Too many messages.</h1>
 

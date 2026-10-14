@@ -102,7 +102,7 @@
                 <div class="measure reveal md:col-span-8">
 
                     <p class="body-text">
-                        There is no best fragrance. There is only the right one for a person, a climate, and an occasion &mdash; and in Bali that usually means heat and humidity, which changes the answer considerably.
+                        There is no best fragrance. There is only the right one for a person, a climate, and an occasion, and in Bali that usually means heat and humidity, which changes the answer considerably.
                     </p>
 
                     <p class="body-text">

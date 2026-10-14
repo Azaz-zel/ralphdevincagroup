@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>New inquiry — {{ $inquiry->name }}</title>
+    <title>New inquiry: {{ $inquiry->name }}</title>
 </head>
 
 <body style="margin:0; padding:24px; background-color:#F7F5F0; color:#1B1A17; font-family:ui-sans-serif, system-ui, sans-serif; line-height:1.6;">

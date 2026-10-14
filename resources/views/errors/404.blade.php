@@ -1,10 +1,9 @@
-<x-layout :title="'Page not found — '.config('site.name')" description="The page you were looking for does not exist.">
+<x-layout :title="'Page not found | '.config('site.name')" description="The page you were looking for does not exist.">
 
     <section class="shell section">
 
         <div class="measure py-10 md:py-20">
 
-            <p class="eyebrow">404</p>
 
             <h1 class="display-l">This page doesn&rsquo;t exist.</h1>
 

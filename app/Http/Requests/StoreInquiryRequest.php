@@ -24,7 +24,7 @@ class StoreInquiryRequest extends FormRequest
             'message' => ['required', 'string', 'min:20', 'max:4000'],
 
             // Filled only by bots. Handled in the controller, never rejected
-            // here — a bot should not learn that it was caught.
+            // here: a bot should not learn that it was caught.
             'company_website' => ['nullable', 'string'],
 
             // Encrypted render time, used to reject instant submissions.
@@ -43,8 +43,8 @@ class StoreInquiryRequest extends FormRequest
             'name.required' => "Add your name so I know who I'm replying to.",
             'email.required' => "That email address doesn't look right. Check it and try again.",
             'email.email' => "That email address doesn't look right. Check it and try again.",
-            'message.required' => 'Add a little more detail — a sentence or two is enough.',
-            'message.min' => 'Add a little more detail — a sentence or two is enough.',
+            'message.required' => 'Add a little more detail. A sentence or two is enough.',
+            'message.min' => 'Add a little more detail. A sentence or two is enough.',
         ];
     }
 

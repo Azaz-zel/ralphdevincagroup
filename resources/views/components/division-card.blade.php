@@ -1,25 +1,32 @@
 @props([
     'division' => [],
+    'image' => null,
 ])
 
 {{--
-    The accent is scoped to the card, which is what allows the two divisions to
+    The accent is scoped to the pane, which is what allows the two divisions to
     sit beside each other on the home page without a section carrying both.
 --}}
 
-<div {{ $attributes->merge(['class' => 'card accent-'.$division['accent'].' reveal flex flex-col p-8 md:p-10']) }}>
+<article {{ $attributes->merge(['class' => 'pane glass reveal accent-'.$division['accent']]) }}>
 
     <span class="block h-px w-12 bg-[var(--accent)]" aria-hidden="true"></span>
 
-    <h3 class="heading mt-8">{{ $division['name'] }}</h3>
+    <h3 class="heading">{{ $division['name'] }}</h3>
 
-    <p class="body-text muted measure mt-5 grow">{{ $division['summary'] }}</p>
+    <p class="body-text measure">{{ $division['summary'] }}</p>
 
-    <p class="mt-8">
-        <a href="{{ route($division['route']) }}" class="link-line mono inline-flex items-center gap-2 text-[0.6875rem] uppercase tracking-[0.25em] text-[var(--accent-text)]">
+    <p>
+        <a href="{{ route($division['route']) }}" class="text-link">
             {{ $division['link_label'] }}
-            <span class="arrow" aria-hidden="true">&rarr;</span>
+            <span class="arrow" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 256 256"><path d="M40 128h176M144 56l72 72-72 72" fill="none" stroke="currentColor" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </a>
     </p>
 
-</div>
+    @if ($image)
+        <div class="pane-shot">
+            <x-picture :file="$image['file']" :alt="$image['alt']" sizes="(min-width: 1024px) 560px, 100vw" />
+        </div>
+    @endif
+
+</article>

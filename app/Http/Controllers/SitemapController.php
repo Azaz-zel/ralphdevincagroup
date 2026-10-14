@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
 use Illuminate\Http\Response;
 
 class SitemapController extends Controller
 {
     /**
-     * Built from the routes and the project list, so adding a case study to
-     * config/projects.php puts it in the sitemap without a second edit.
+     * Built from the routes and the projects table, so a case study added in
+     * the admin is in the sitemap without a second edit.
      */
     public function __invoke(): Response
     {
@@ -20,9 +21,9 @@ class SitemapController extends Controller
             ['loc' => route('work'), 'changefreq' => 'monthly', 'priority' => '0.8'],
         ];
 
-        foreach (config('projects') as $project) {
+        foreach (Project::ordered()->pluck('slug') as $slug) {
             $urls[] = [
-                'loc' => route('work.show', $project['slug']),
+                'loc' => route('work.show', $slug),
                 'changefreq' => 'yearly',
                 'priority' => '0.6',
             ];

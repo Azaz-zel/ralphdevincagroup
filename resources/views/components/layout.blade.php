@@ -3,6 +3,7 @@
     'description' => null,
     'image' => null,
     'bodyClass' => '',
+    'admin' => false,
 ])
 
 @php
@@ -30,7 +31,10 @@
 
     <meta name="description" content="{{ $pageDescription }}">
     <link rel="canonical" href="{{ url()->current() }}">
-    <meta name="theme-color" content="#1B1A17">
+    <meta name="theme-color" content="#F7F2E7">
+    @if ($admin)
+        <meta name="robots" content="noindex, nofollow">
+    @endif
 
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
@@ -57,13 +61,13 @@
 
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <x-navbar />
+    <x-navbar :admin="$admin" />
 
     <main id="main">
         {{ $slot }}
     </main>
 
-    <x-footer />
+    <x-footer :admin="$admin" />
 
 </body>
 
