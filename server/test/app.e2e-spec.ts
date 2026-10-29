@@ -4,7 +4,7 @@ import request from 'supertest';
 import { AppModule } from './../src/app.module.js';
 import { configure } from './../src/security.js';
 
-// None of these requests reach Supabase: each is answered before any query runs.
+// None of these requests reach the database: each is answered before any query runs.
 describe('API (e2e)', () => {
   let app: NestExpressApplication;
   const valid = { name: 'Ayu', email: 'ayu@example.com', message: 'Hello', company_website: 'bot-filled' };
@@ -67,6 +67,14 @@ describe('API (e2e)', () => {
 
     it.each(routes)('%s %s is closed without a token', async (method, path) => {
       await (request(app.getHttpServer()) as unknown as Record<string, (p: string) => request.Test>)[method](path).expect(401);
+    });
+
+    it('refuses a login with a malformed email before looking it up', () => {
+      return request(app.getHttpServer()).post('/auth/login').send({ email: 'nope', password: 'x' }).expect(400);
+    });
+
+    it('is closed with a forged bearer token', () => {
+      return request(app.getHttpServer()).get('/admin/inquiries').set('Authorization', 'Bearer forged.token').expect(401);
     });
 
     it('is closed with a token that is not a bearer token', () => {

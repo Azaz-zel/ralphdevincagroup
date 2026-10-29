@@ -1,62 +1,75 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { SUPABASE, must, type Db } from '../supabase.js';
+import { randomUUID } from 'node:crypto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Db } from '../db.js';
 import { type CreateInquiryDto, type Inquiry, type InquiryStatus, STATUSES, toSearchTerm } from './inquiry.entity.js';
 
 const LIST_COLUMNS = 'id, name, email, division, message, status, created_at';
 
 @Injectable()
 export class InquiriesService {
-  constructor(@Inject(SUPABASE) private readonly db: Db) {}
+  constructor(private readonly db: Db) {}
 
   async create(dto: CreateInquiryDto, meta: { ip?: string; userAgent?: string }): Promise<void> {
-    must(
-      await this.db.from('inquiries').insert({
+    await this.db.query('INSERT INTO inquiries SET ?', [
+      {
+        id: randomUUID(),
         name: dto.name,
         email: dto.email,
         division: dto.division ?? 'unsure',
         message: dto.message,
         ip_address: meta.ip ?? null,
         user_agent: meta.userAgent?.slice(0, 500) ?? null,
-      }),
-    );
+      },
+    ]);
   }
 
   async list(status?: string, q?: string) {
-    // shortcut: newest 200 only, no paging; add paging if the inbox ever outgrows that.
-    let query = this.db.from('inquiries').select(LIST_COLUMNS).order('created_at', { ascending: false }).limit(200);
+    const where: string[] = [];
+    const values: unknown[] = [];
     const filter = STATUSES.includes(status as InquiryStatus) ? (status as InquiryStatus) : null;
-    if (filter) query = query.eq('status', filter);
+    if (filter) {
+      where.push('status = ?');
+      values.push(filter);
+    }
     const term = toSearchTerm(q);
-    if (term) query = query.or(`name.ilike."*${term}*",email.ilike."*${term}*",message.ilike."*${term}*"`);
+    if (term) {
+      const like = `%${term.replace(/[%_]/g, (wildcard) => `\\${wildcard}`)}%`;
+      where.push('(name LIKE ? OR email LIKE ? OR message LIKE ?)');
+      values.push(like, like, like);
+    }
 
-    const items = must(await query);
-    const statuses = must(await this.db.from('inquiries').select('status')) as { status: InquiryStatus }[];
-    const counts = Object.fromEntries(STATUSES.map((s) => [s, statuses.filter((row) => row.status === s).length]));
+    // shortcut: newest 200 only, no paging; add paging if the inbox ever outgrows that.
+    const items = await this.db.query(
+      `SELECT ${LIST_COLUMNS} FROM inquiries ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY created_at DESC LIMIT 200`,
+      values,
+    );
+    const grouped = await this.db.query<{ status: InquiryStatus; n: number }[]>('SELECT status, COUNT(*) AS n FROM inquiries GROUP BY status');
+    const counts = Object.fromEntries(STATUSES.map((s) => [s, Number(grouped.find((row) => row.status === s)?.n ?? 0)]));
+    const total = Object.values(counts).reduce((sum, n) => sum + n, 0);
 
-    return { items, counts, total: statuses.length, filter, q: term };
+    return { items, counts, total, filter, q: term };
   }
 
   /** Opening a message is what marks it read; the first reading time is kept. */
   async open(id: string): Promise<Inquiry> {
     const inquiry = await this.find(id);
     if (inquiry.status !== 'new') return inquiry;
-    return this.write(id, { status: 'read', read_at: inquiry.read_at ?? new Date().toISOString() });
+    await this.db.query("UPDATE inquiries SET status = 'read', read_at = COALESCE(read_at, CURRENT_TIMESTAMP) WHERE id = ?", [id]);
+    return this.find(id);
   }
 
   async setStatus(id: string, status: InquiryStatus): Promise<Inquiry> {
-    const inquiry = await this.find(id);
-    const changes: Partial<Inquiry> = { status };
-    if (status === 'replied' && !inquiry.replied_at) changes.replied_at = new Date().toISOString();
-    return this.write(id, changes);
+    await this.find(id);
+    await this.db.query(
+      "UPDATE inquiries SET status = ?, replied_at = IF(? = 'replied', COALESCE(replied_at, CURRENT_TIMESTAMP), replied_at) WHERE id = ?",
+      [status, status, id],
+    );
+    return this.find(id);
   }
 
   private async find(id: string): Promise<Inquiry> {
-    const inquiry = must(await this.db.from('inquiries').select('*').eq('id', id).maybeSingle()) as Inquiry | null;
+    const [inquiry] = await this.db.query<Inquiry[]>('SELECT * FROM inquiries WHERE id = ?', [id]);
     if (!inquiry) throw new NotFoundException('That message no longer exists.');
     return inquiry;
-  }
-
-  private async write(id: string, changes: Partial<Inquiry>): Promise<Inquiry> {
-    return must(await this.db.from('inquiries').update(changes).eq('id', id).select('*').single()) as Inquiry;
   }
 }

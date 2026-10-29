@@ -1,11 +1,11 @@
-import { ForbiddenException, UnauthorizedException, type ExecutionContext } from '@nestjs/common';
-import { AdminGuard } from './admin.js';
+import { UnauthorizedException, type ExecutionContext } from '@nestjs/common';
+import { AdminGuard, signToken } from './admin.js';
+import type { Db } from './db.js';
 import { keepOwnPhotos, sniffPhoto } from './projects/project.entity.js';
-import type { Db } from './supabase.js';
 
-function guardWith(user: object | null, error: object | null = null) {
-  const db = { auth: { getUser: async () => ({ data: { user }, error }) } } as unknown as Db;
-  return new AdminGuard(db);
+function guardWith(users: string[]) {
+  const db = { query: async (_sql: string, [email]: string[]) => users.filter((user) => user === email).map((user) => ({ email: user })) };
+  return new AdminGuard(db as unknown as Db);
 }
 
 function context(authorization?: string): ExecutionContext {
@@ -15,38 +15,26 @@ function context(authorization?: string): ExecutionContext {
 
 describe('AdminGuard', () => {
   beforeEach(() => {
-    process.env.ADMIN_EMAILS = 'owner@example.com';
+    process.env.AUTH_SECRET = 'a'.repeat(32);
   });
 
   it('refuses a request without a bearer token', async () => {
-    await expect(guardWith(null).canActivate(context())).rejects.toBeInstanceOf(UnauthorizedException);
-    await expect(guardWith(null).canActivate(context('Basic abc'))).rejects.toBeInstanceOf(UnauthorizedException);
+    await expect(guardWith([]).canActivate(context())).rejects.toBeInstanceOf(UnauthorizedException);
+    await expect(guardWith([]).canActivate(context('Basic abc'))).rejects.toBeInstanceOf(UnauthorizedException);
   });
 
-  it('refuses a token Supabase does not accept', async () => {
-    const guard = guardWith(null, { message: 'invalid JWT' });
-    await expect(guard.canActivate(context('Bearer forged'))).rejects.toBeInstanceOf(UnauthorizedException);
+  it('refuses a token this server did not sign', async () => {
+    await expect(guardWith(['owner@example.com']).canActivate(context('Bearer forged.token'))).rejects.toBeInstanceOf(UnauthorizedException);
   });
 
-  it('refuses a real account that is not on ADMIN_EMAILS', async () => {
-    const guard = guardWith({ email: 'stranger@example.com', email_confirmed_at: '2026-10-29T00:00:00Z' });
-    await expect(guard.canActivate(context('Bearer t'))).rejects.toBeInstanceOf(ForbiddenException);
+  it('refuses a valid token for an account that was deleted', async () => {
+    const token = signToken('owner@example.com');
+    await expect(guardWith([]).canActivate(context('Bearer ' + token))).rejects.toBeInstanceOf(UnauthorizedException);
   });
 
-  it('refuses the admin email while it is unconfirmed', async () => {
-    const guard = guardWith({ email: 'owner@example.com', email_confirmed_at: null });
-    await expect(guard.canActivate(context('Bearer t'))).rejects.toBeInstanceOf(ForbiddenException);
-  });
-
-  it('refuses everyone when ADMIN_EMAILS is empty', async () => {
-    process.env.ADMIN_EMAILS = '';
-    const guard = guardWith({ email: 'owner@example.com', email_confirmed_at: '2026-10-29T00:00:00Z' });
-    await expect(guard.canActivate(context('Bearer t'))).rejects.toBeInstanceOf(ForbiddenException);
-  });
-
-  it('lets the confirmed admin through', async () => {
-    const guard = guardWith({ email: 'Owner@Example.com', email_confirmed_at: '2026-10-29T00:00:00Z' });
-    await expect(guard.canActivate(context('Bearer t'))).resolves.toBe(true);
+  it('lets an existing admin through', async () => {
+    const token = signToken('owner@example.com');
+    await expect(guardWith(['owner@example.com']).canActivate(context('Bearer ' + token))).resolves.toBe(true);
   });
 });
 

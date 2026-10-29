@@ -5,7 +5,7 @@ import { TechnologyMark } from '@/components/marks';
 import { api } from '@/lib/api';
 import { pageTitle, useTitle } from '@/lib/hooks';
 import { Link, navigate, safeNext } from '@/lib/router';
-import { supabase } from '@/lib/supabase';
+import { setToken } from '@/lib/auth';
 
 
 export default function Login() {
@@ -19,21 +19,14 @@ export default function Login() {
     const data = new FormData(event.currentTarget);
     setBusy(true);
     setError('');
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email: String(data.get('email') ?? '').trim(),
-      password: String(data.get('password') ?? ''),
-    });
-    if (authError) {
-      setBusy(false);
-      setError('That email and password don’t match. Check both and try again.');
-      return;
-    }
     try {
-      // Signing in proves the password; the server decides whether this account may use the admin.
-      await api('/admin/me');
+      const { token } = await api<{ token: string }>('/auth/login', {
+        method: 'POST',
+        json: { email: String(data.get('email') ?? '').trim(), password: String(data.get('password') ?? '') },
+      });
+      setToken(token);
       navigate(safeNext(window.location.search), { replace: true });
     } catch (caught) {
-      await supabase.auth.signOut();
       setError((caught as Error).message);
       setBusy(false);
     }

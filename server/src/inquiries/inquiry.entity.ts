@@ -54,7 +54,7 @@ export class UpdateStatusDto {
   status: InquiryStatus;
 }
 
-/** Makes a search term safe to place inside a quoted PostgREST filter value. */
+/** Trims and caps a search term; the query passes it as a parameter and escapes LIKE wildcards itself. */
 export function toSearchTerm(q: unknown): string {
   return typeof q === 'string' ? q.replace(/["\\*]/g, '').trim().slice(0, 100) : '';
 }

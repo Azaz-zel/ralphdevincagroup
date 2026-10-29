@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { getToken, setToken } from './auth';
 import { navigate } from './router';
 
 export const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
@@ -17,12 +18,8 @@ type Options = Omit<RequestInit, 'body'> & { json?: unknown; body?: BodyInit };
 export async function api<T>(path: string, { json, headers, ...init }: Options = {}): Promise<T> {
   const finalHeaders = new Headers(headers);
   if (json !== undefined) finalHeaders.set('Content-Type', 'application/json');
-  if (path.startsWith('/admin')) {
-    // Loaded only for admin calls, so public visitors never download the Supabase client.
-    const { supabase } = await import('./supabase');
-    const { data } = await supabase.auth.getSession();
-    if (data.session) finalHeaders.set('Authorization', `Bearer ${data.session.access_token}`);
-  }
+  const token = path.startsWith('/admin') ? getToken() : null;
+  if (token) finalHeaders.set('Authorization', `Bearer ${token}`);
 
   let response: Response;
   try {
@@ -36,6 +33,7 @@ export async function api<T>(path: string, { json, headers, ...init }: Options =
   }
 
   if (response.status === 401 && path.startsWith('/admin')) {
+    setToken(null);
     navigate('/admin/login?next=' + encodeURIComponent(window.location.pathname), { replace: true });
   }
   if (!response.ok) {

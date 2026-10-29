@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { useApi } from '@/lib/api';
 import { Link, navigate, usePathname } from '@/lib/router';
-import { supabase } from '@/lib/supabase';
+import { getToken, setToken } from '@/lib/auth';
 import type { InboxResponse } from '@/lib/types';
 import { current } from './layout';
 
@@ -9,10 +9,8 @@ import { current } from './layout';
 export default function AdminShell({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setReady(true);
-      else navigate('/admin/login?next=' + encodeURIComponent(window.location.pathname), { replace: true });
-    });
+    if (getToken()) setReady(true);
+    else navigate('/admin/login?next=' + encodeURIComponent(window.location.pathname), { replace: true });
   }, []);
   return ready ? <AdminLayout>{children}</AdminLayout> : null;
 }
@@ -26,8 +24,8 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   // Refresh the unread count on every admin page change, so reading a message clears it.
   useEffect(() => reload(), [pathname, reload]);
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
+  const signOut = () => {
+    setToken(null);
     navigate('/admin/login', { replace: true });
   };
 
