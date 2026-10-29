@@ -20,9 +20,9 @@ Portfolio and front door of Ralph de Vinca Group, an independent group in Bali w
 One person, two crafts held to one standard. Each case study shows the constraint and the decisions behind the work, not only the result. Nothing is padded: the work shown is all the work there is.
 
 ## Operating Context
-- React + TypeScript (client/), NestJS (server/), Supabase Postgres, Storage and Auth. Laravel was removed on 2026-10-29.
-- One admin account (a Supabase Auth user whose email is in `ADMIN_EMAILS`) reads contact inquiries at `/admin/inbox`.
-- Case studies live in the `projects` table and are added, edited and deleted at `/admin/projects`. Photos go to the Storage bucket `work`; the owner supplies new photos, so slots show the division mark until then.
+- React + TypeScript (client/), NestJS (server/), MySQL. Laravel was removed on 2026-10-29; Supabase was replaced by MySQL the same day.
+- One admin account (a row in the `users` table, made with `npm run admin:create`) reads contact inquiries at `/admin/inbox`.
+- Case studies live in the `projects` table and are added, edited and deleted at `/admin/projects`. Photos are saved to `server/uploads`; the owner supplies new photos, so slots show the division mark until then.
 
 ## Capabilities and Constraints
 - Public pages: home, about, perfumery, technology, work index, work detail, contact (one form), privacy.
@@ -40,7 +40,7 @@ One person, two crafts held to one standard. Each case study shows the constrain
 - Owner decision 2026-10-14: no em dashes in visible copy.
 
 ## Evidence on Hand
-- Three real projects in the Supabase `projects` table: Ralph de Vinca Perfumery, Bali Cebelok Gesiuh, PKKMB INSTIKI 2026. Their photos are being replaced by the owner.
+- Three real projects in the `projects` table (`server/seed.sql`): Ralph de Vinca Perfumery, Bali Cebelok Gesiuh, PKKMB INSTIKI 2026. Their photos are being replaced by the owner.
 - Real client testimonials exist (owner confirmed) but their text is not yet in the repo. Do not invent quotes; show a testimonial only when the real text is entered.
 - No statistics, client logos, or awards. Do not fabricate any.
 

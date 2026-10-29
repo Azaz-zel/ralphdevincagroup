@@ -1,22 +1,18 @@
 import { randomUUID } from 'node:crypto';
-import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { BUCKET, SUPABASE, must, photoUrl, type Db } from '../supabase.js';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { DUPLICATE, Db, photoUrl, removeFiles, saveFile } from '../db.js';
 import { keepOwnPhotos, sniffPhoto, type Photo, type Project, type ProjectDto } from './project.entity.js';
 
 const withUrls = (images: Photo[]) => images.map((image) => ({ ...image, url: photoUrl(image.path) }));
 
 @Injectable()
 export class ProjectsService {
-  constructor(@Inject(SUPABASE) private readonly db: Db) {}
+  constructor(private readonly db: Db) {}
 
   async listPublic() {
-    const rows = must(
-      await this.db
-        .from('projects')
-        .select('id, slug, name, division, summary, index_summary, meta_label, images, cover')
-        .order('position')
-        .order('id'),
-    ) as Pick<Project, 'id' | 'slug' | 'name' | 'division' | 'summary' | 'index_summary' | 'meta_label' | 'images' | 'cover'>[];
+    const rows = await this.db.query<
+      Pick<Project, 'id' | 'slug' | 'name' | 'division' | 'summary' | 'index_summary' | 'meta_label' | 'images' | 'cover'>[]
+    >('SELECT id, slug, name, division, summary, index_summary, meta_label, images, cover FROM projects ORDER BY position, id');
 
     return rows.map(({ images, cover, ...row }) => {
       const image = images[cover] ?? images[0];
@@ -25,7 +21,7 @@ export class ProjectsService {
   }
 
   async bySlug(slug: string) {
-    const all = must(await this.db.from('projects').select('*').order('position').order('id')) as Project[];
+    const all = await this.db.query<Project[]>('SELECT * FROM projects ORDER BY position, id');
     const index = all.findIndex((project) => project.slug === slug);
     if (index === -1) throw new NotFoundException('That case study does not exist.');
     const project = all[index];
@@ -39,9 +35,9 @@ export class ProjectsService {
   }
 
   async listAdmin() {
-    const rows = must(
-      await this.db.from('projects').select('id, slug, name, division, position, images, cover').order('position').order('id'),
-    ) as Pick<Project, 'id' | 'slug' | 'name' | 'division' | 'position' | 'images' | 'cover'>[];
+    const rows = await this.db.query<Pick<Project, 'id' | 'slug' | 'name' | 'division' | 'position' | 'images' | 'cover'>[]>(
+      'SELECT id, slug, name, division, position, images, cover FROM projects ORDER BY position, id',
+    );
     return rows.map((row) => ({ ...row, images: withUrls(row.images) }));
   }
 
@@ -51,9 +47,8 @@ export class ProjectsService {
   }
 
   async create(dto: ProjectDto) {
-    const result = await this.db.from('projects').insert(this.columns(dto, [], 0)).select('id').single();
-    this.throwIfSlugTaken(result.error);
-    return must(result) as { id: number };
+    const result = await this.write(() => this.db.query<{ insertId: number }>('INSERT INTO projects SET ?', [this.columns(dto, [], 0)]));
+    return { id: result.insertId };
   }
 
   async update(id: number, dto: ProjectDto) {
@@ -63,17 +58,15 @@ export class ProjectsService {
     const removed = current.images.filter((image) => !keep.some((kept) => kept.path === image.path));
     const cover = Math.min(dto.cover ?? current.cover, Math.max(keep.length - 1, 0));
 
-    const result = await this.db.from('projects').update(this.columns(dto, keep, cover)).eq('id', id);
-    this.throwIfSlugTaken(result.error);
-    must(result);
-    await this.removeFiles(removed.map((image) => image.path));
+    await this.write(() => this.db.query('UPDATE projects SET ? WHERE id = ?', [this.columns(dto, keep, cover), id]));
+    await removeFiles(removed.map((image) => image.path));
     return this.get(id);
   }
 
   async remove(id: number): Promise<void> {
     const project = await this.find(id);
-    must(await this.db.from('projects').delete().eq('id', id));
-    await this.removeFiles(project.images.map((image) => image.path));
+    await this.db.query('DELETE FROM projects WHERE id = ?', [id]);
+    await removeFiles(project.images.map((image) => image.path));
   }
 
   async addPhoto(id: number, file: Express.Multer.File | undefined, alt: string) {
@@ -85,14 +78,14 @@ export class ProjectsService {
     if (project.images.length >= 12) throw new BadRequestException('A project can hold up to 12 photos.');
 
     const path = `${project.id}/${randomUUID()}.${type.extension}`;
-    must(await this.db.storage.from(BUCKET).upload(path, file.buffer, { contentType: type.mime, upsert: false }));
+    await saveFile(path, file.buffer);
     const images = [...project.images, { path, alt: alt.trim().slice(0, 300) }];
-    must(await this.db.from('projects').update({ images }).eq('id', id));
+    await this.db.query('UPDATE projects SET images = ? WHERE id = ?', [JSON.stringify(images), id]);
     return this.get(id);
   }
 
   private async find(id: number): Promise<Project> {
-    const project = must(await this.db.from('projects').select('*').eq('id', id).maybeSingle()) as Project | null;
+    const [project] = await this.db.query<Project[]>('SELECT * FROM projects WHERE id = ?', [id]);
     if (!project) throw new NotFoundException('That project no longer exists.');
     return project;
   }
@@ -106,30 +99,28 @@ export class ProjectsService {
       summary: dto.summary,
       index_summary: dto.index_summary ?? null,
       meta_label: dto.meta_label ?? null,
-      // Empty rows in the form are ignored rather than stored.
-      facts: dto.facts.filter((fact) => fact.label && fact.value),
+      // Empty rows in the form are ignored rather than stored. JSON columns are sent as text.
+      facts: JSON.stringify(dto.facts.filter((fact) => fact.label && fact.value)),
       situation: dto.situation,
       constraint_text: dto.constraint_text ?? null,
       result: dto.result,
-      decisions: dto.decisions.filter((decision) => decision.title && decision.body),
+      decisions: JSON.stringify(dto.decisions.filter((decision) => decision.title && decision.body)),
       composition_top: dto.composition_top,
       composition_heart: dto.composition_heart,
       composition_base: dto.composition_base,
-      images,
+      images: JSON.stringify(images),
       cover,
       seo_title: dto.seo_title ?? null,
       seo_description: dto.seo_description ?? null,
     };
   }
 
-  private throwIfSlugTaken(error: { code?: string } | null): void {
-    if (error?.code === '23505') throw new ConflictException('That address is already used by another project.');
-  }
-
-  private async removeFiles(paths: string[]): Promise<void> {
-    if (paths.length === 0) return;
-    const { error } = await this.db.storage.from(BUCKET).remove(paths);
-    // The row is already saved; a leftover file only costs storage, so log it rather than fail the request.
-    if (error) console.error('Could not remove photos', paths, error);
+  private async write<T>(run: () => Promise<T>): Promise<T> {
+    try {
+      return await run();
+    } catch (error) {
+      if ((error as { errno?: number }).errno === DUPLICATE) throw new ConflictException('That address is already used by another project.');
+      throw error;
+    }
   }
 }

@@ -18,7 +18,7 @@ const ITEMS = [
   },
   {
     title: 'Where it is stored',
-    body: 'Messages are stored in a Supabase database hosted in Singapore, reachable only by the server that runs this site.',
+    body: 'Messages are stored in a MySQL database reachable only by the server that runs this site.',
   },
   { title: 'How long it is kept', body: 'Messages are kept while the conversation is useful, and deleted on request.' },
   {
