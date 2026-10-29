@@ -20,27 +20,27 @@ Portfolio and front door of Ralph de Vinca Group, an independent group in Bali w
 One person, two crafts held to one standard. Each case study shows the constraint and the decisions behind the work, not only the result. Nothing is padded: the work shown is all the work there is.
 
 ## Operating Context
-- Laravel 12 + Blade + Tailwind v4 + Vite, vanilla JS, no front-end framework.
-- One admin account (created with `php artisan admin:create`) reads contact inquiries at `/inbox`.
-- Case studies live in the `projects` table and are added, edited and deleted at `/admin/projects` (same single admin login). Uploaded screenshots are re-encoded into 800/1200/1600w JPG + WebP under `public/images/work/`.
+- React + TypeScript (client/), NestJS (server/), Supabase Postgres, Storage and Auth. Laravel was removed on 2026-10-29.
+- One admin account (a Supabase Auth user whose email is in `ADMIN_EMAILS`) reads contact inquiries at `/admin/inbox`.
+- Case studies live in the `projects` table and are added, edited and deleted at `/admin/projects`. Photos go to the Storage bucket `work`; the owner supplies new photos, so slots show the division mark until then.
 
 ## Capabilities and Constraints
-- Public pages: home, about, perfumery, technology, work index, work detail, contact (one form), privacy, sitemap.
-- Every fact lives in config (`config/site.php`, `config/divisions.php`), never typed into a view. Project counts on pages are derived, never typed.
-- Screenshots are served as 800/1200/1600w WebP + JPEG with intrinsic size, so pages never shift while loading.
-- Contrast floor: 4.5:1 for text (see token notes in `resources/css/app.css`).
+- Public pages: home, about, perfumery, technology, work index, work detail, contact (one form), privacy.
+- Shared facts live in `client/src/lib/config.tsx`; project counts on pages are derived, never typed.
+- Photo slots keep their aspect ratio before and after loading, so pages never shift.
+- Contrast floor: 4.5:1 for text (tokens in `client/src/index.css`).
 
 ## Brand Commitments
 - Name: Ralph de Vinca Group. Wordmark "Ralph de Vinca" with line "GROUP".
 - Thesis: "Things that are not seen, but felt." Tagline: "Wisdom that binds, and endures."
 - Four principles taken from the name: Composition, Precision, Binding, Endurance. Copy for these is word-for-word identical on Home and About.
 - Signature element: the Composition, a three-layer TOP / HEART / BASE block written in the grammar of a perfume formula, used for the group and for each project's stack.
-- Accent per division: Perfumery = vinca, Technology = brass.
+- One accent, burgundy #7A1F2B. Division marks (2026-10-29): Perfumery is a solid five-petal vinca, Technology the same petals faceted.
 - Voice: plain, first person, honest about limits ("If it isn't a good fit, I'll say so.").
 - Owner decision 2026-10-14: no em dashes in visible copy.
 
 ## Evidence on Hand
-- Three real projects in `config/projects.php`: Ralph de Vinca Perfumery, Bali Cebelok Gesiuh, PKKMB INSTIKI 2026, with screenshots in `public/images/work/`.
+- Three real projects in the Supabase `projects` table: Ralph de Vinca Perfumery, Bali Cebelok Gesiuh, PKKMB INSTIKI 2026. Their photos are being replaced by the owner.
 - Real client testimonials exist (owner confirmed) but their text is not yet in the repo. Do not invent quotes; show a testimonial only when the real text is entered.
 - No statistics, client logos, or awards. Do not fabricate any.
 
