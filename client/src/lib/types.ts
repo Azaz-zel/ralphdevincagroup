@@ -14,6 +14,9 @@ export interface ProjectSummary {
   summary: string;
   index_summary: string | null;
   meta_label: string | null;
+  facts: { label: string; value: string }[];
+  decisions: { title: string; body: string }[];
+  result: string;
   cover: { url: string; alt: string } | null;
 }
 
@@ -40,9 +43,17 @@ export interface Project {
   seo_description: string | null;
 }
 
+export interface Neighbour {
+  slug: string;
+  name: string;
+  division: Division;
+  number: number;
+}
+
 export interface CaseStudy extends Project {
   number: number;
-  next: { slug: string; name: string; number: number } | null;
+  next: Neighbour | null;
+  prev: Neighbour | null;
 }
 
 export type InquiryStatus = 'new' | 'read' | 'replied' | 'archived';

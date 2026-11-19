@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Param,
+  Patch,
   ParseIntPipe,
   Post,
   Put,
@@ -14,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AdminGuard } from '../admin.js';
-import { ProjectDto } from './project.entity.js';
+import { OrderDto, ProjectDto } from './project.entity.js';
 import { ProjectsService } from './projects.service.js';
 
 @Controller('projects')
@@ -40,6 +41,12 @@ export class AdminProjectsController {
   @Get()
   list() {
     return this.service.listAdmin();
+  }
+
+  // Declared before ':id' routes so "order" is never read as an id.
+  @Patch('order')
+  reorder(@Body() dto: OrderDto) {
+    return this.service.reorder(dto.ids);
   }
 
   @Get(':id')

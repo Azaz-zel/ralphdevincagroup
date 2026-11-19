@@ -1,9 +1,8 @@
 import { ValidationPipe } from '@nestjs/common';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import type { NextFunction, Request, Response } from 'express';
-import { UPLOADS } from './db.js';
 
-/** Headers for an API that returns JSON and uploaded photos: nothing here should be framed, sniffed or run. */
+/** Headers for an API that only ever returns JSON: nothing here should be framed, sniffed or cached. */
 export function securityHeaders(request: Request, response: Response, next: NextFunction): void {
   response.setHeader('X-Content-Type-Options', 'nosniff');
   response.setHeader('X-Frame-Options', 'DENY');
@@ -18,8 +17,6 @@ export function configure(app: NestExpressApplication): void {
   if (process.env.TRUST_PROXY === '1') app.set('trust proxy', 1);
   app.disable('x-powered-by');
   app.use(securityHeaders);
-  // Photos are stored under random names, so they can be cached for good.
-  app.useStaticAssets(UPLOADS, { prefix: '/uploads/', maxAge: '365d', immutable: true, index: false, dotfiles: 'deny' });
   app.enableCors({
     origin: (process.env.CLIENT_ORIGINS ?? 'http://localhost:5173').split(',').map((origin) => origin.trim()),
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],

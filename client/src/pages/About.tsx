@@ -1,4 +1,5 @@
-import { Photo, SectionLabel, Win } from '@/components/hud';
+import type { ReactNode } from 'react';
+import { Photo } from '@/components/ui';
 import { PerfumeryMark } from '@/components/marks';
 import { photos, principles, site } from '@/lib/config';
 import { pad } from '@/lib/format';
@@ -61,170 +62,157 @@ export default function About() {
 
   return (
     <>
-      <section className="intro">
-        <div className="wrap g12 end">
-          <div className="span-8">
-            <p className="m" style={{ margin: '0 0 16px' }}>[ About the group ]</p>
-            <h1 className="h1">
-              Wisdom that binds, and <span className="ac">endures.</span>
-            </h1>
-          </div>
-          <Win className="span-r4" title="Ralph de Vinca" tag="/00">
-            <p className="p sm">The name came before anything it now stands for. This is what it turned out to mean.</p>
-            <div className="bars" aria-hidden="true" />
-          </Win>
-        </div>
+      <section className="wrap page-hero">
+        <h1 className="disp">
+          Wisdom that binds, and <span className="gold">endures.</span>
+        </h1>
+        <p className="lede" style={{ marginTop: 24 }}>The name came before anything it now stands for. This is what it turned out to mean.</p>
       </section>
 
-      <section className="sec" id="the-name">
-        <div className="wrap">
-          <SectionLabel label="01 / The name" aside="Three parts" />
-          <dl style={{ margin: 0 }}>
-            {NAME.map((part) => (
-              <div key={part.term} className="row base">
-                <dt className="h2" style={{ gridColumn: '1 / 6' }}>{part.term}</dt>
-                <dd className="p" style={{ gridColumn: '6 / 13', margin: 0 }}>{part.body}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="m ac" style={{ margin: '28px 0 0' }}>→ Put together: wisdom that binds, and endures.</p>
-        </div>
-      </section>
+      <Section id="the-name" label="The name" aside="Three parts">
+        <dl style={{ margin: 0 }}>
+          {NAME.map((part) => (
+            <div key={part.term} className="name-row">
+              <dt className="disp" style={{ fontSize: 'clamp(28px, 3vw, 44px)' }}>{part.term}</dt>
+              <dd className="p" style={{ margin: 0 }}>{part.body}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="mono gold" style={{ margin: '28px 0 0' }}>Put together: wisdom that binds, and endures.</p>
+      </Section>
 
-      <section className="sec" id="what-this-is-built-on">
-        <div className="wrap">
-          <SectionLabel label="02 / What this is built on" aside="One roof" />
-          <div className="g12">
-            <p className="h3 lg c-l">Both are hidden compositions with consequences you can feel.</p>
-            <div className="c-r">
-              <p className="p">
-                Any group that covers more than one field has to answer one question before anything else: why do these things belong under one roof?
-                Without an answer, a group is only a name attached to unrelated work.
-              </p>
-              <p className="p">
-                The answer here is that perfume is invisible architecture that changes how a person feels, and good software works exactly the same
-                way. Nobody sees a database schema or the decisions behind it, but everybody feels the difference between something that runs
-                smoothly and something that hurts to use.
-              </p>
-              <p className="p">
-                This was not decided first and proven later. It had already happened. The first thing built under this name was software about
-                perfume.
-              </p>
-            </div>
+      <Section id="what-this-is-built-on" label="What this is built on" aside="One roof">
+        <div className="split">
+          <p className="disp">Both are hidden compositions with consequences you can feel.</p>
+          <div>
+            <p className="p">
+              Any group that covers more than one field has to answer one question before anything else: why do these things belong under one roof?
+              Without an answer, a group is only a name attached to unrelated work.
+            </p>
+            <p className="p">
+              The answer here is that perfume is invisible architecture that changes how a person feels, and good software works exactly the same
+              way. Nobody sees a database schema or the decisions behind it, but everybody feels the difference between something that runs
+              smoothly and something that hurts to use.
+            </p>
+            <p className="p">
+              This was not decided first and proven later. It had already happened. The first thing built under this name was software about
+              perfume.
+            </p>
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section className="sec" id="how-it-happened">
-        <div className="wrap">
-          <SectionLabel label="03 / How it happened" aside="Name first" />
-          <div className="g12" style={{ marginBottom: 56 }}>
-            <p className="h3 lg c-l">The name existed first. The substance came after.</p>
-            <div className="c-r">
-              <p className="p">
-                The name was chosen while changing a username in a game. It was picked because it sounded French, like something with a long history,
-                at a point when it had no history at all.
-              </p>
-              <p className="p">What followed ran opposite to the way most companies begin.</p>
-            </div>
-          </div>
-          <div className="cards" style={{ marginBottom: 56 }}>
-            {SUBSTANCES.map((item, index) => (
-              <Win key={item.title} title={`Substance ${pad(index + 1)}`}>
-                <h3 className="h3" style={{ fontSize: 22, marginBottom: 10 }}>{item.title}</h3>
-                <p className="p sm">{item.body}</p>
-              </Win>
-            ))}
-          </div>
-          <div className="g12">
-            <div className="c-r">
-              <p className="p">
-                The three look unrelated: fragrance, tourism, a campus system. The pattern is clear from a distance: all three are invisible
-                structures that change how people experience something.
-              </p>
-              <p className="p">Ralph de Vinca Group was not designed on paper. It was noticed, after the pattern had already happened.</p>
-              <p className="p">
-                One detail is worth keeping. Perfumery was built first, and paid work arrived afterward. The work came because the hobby was taken
-                seriously, not the other way around.
-              </p>
-            </div>
+      <Section id="how-it-happened" label="How it happened" aside="Name first">
+        <div className="split" style={{ marginBottom: 40 }}>
+          <p className="disp">The name existed first. The substance came after.</p>
+          <div>
+            <p className="p">
+              The name was chosen while changing a username in a game. It was picked because it sounded French, like something with a long history,
+              at a point when it had no history at all.
+            </p>
+            <p className="p">What followed ran opposite to the way most companies begin.</p>
           </div>
         </div>
-      </section>
+        <div className="cards" style={{ marginBottom: 40 }}>
+          {SUBSTANCES.map((item, index) => (
+            <div key={item.title} className={'card ' + ['goldfill', 'night', 'paper'][index]}>
+              <span className="mono">Substance {pad(index + 1)}</span>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
+          ))}
+        </div>
+        <div className="split">
+          <span />
+          <div>
+            <p className="p">
+              The three look unrelated: fragrance, tourism, a campus system. The pattern is clear from a distance: all three are invisible
+              structures that change how people experience something.
+            </p>
+            <p className="p">Ralph de Vinca Group was not designed on paper. It was noticed, after the pattern had already happened.</p>
+            <p className="p">
+              One detail is worth keeping. Perfumery was built first, and paid work arrived afterward. The work came because the hobby was taken
+              seriously, not the other way around.
+            </p>
+          </div>
+        </div>
+      </Section>
 
-      <section className="sec" id="four-principles">
-        <div className="wrap">
-          <SectionLabel label="04 / Four principles" aside="Taken from the name" />
-          <div className="cards" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '32px 24px' }}>
-            {principles.map((principle, index) => (
-              <div key={principle.name} className="rule-top">
-                <p className="m ac" style={{ margin: '0 0 20px' }}>{pad(index + 1)}</p>
-                <h3 className="h3" style={{ marginBottom: 10 }}>{principle.name}</h3>
-                <p className="p sm">{principle.body}</p>
-              </div>
-            ))}
-          </div>
+      <Section id="four-principles" label="Four principles" aside="Taken from the name">
+        <div className="cards">
+          {principles.map((principle) => (
+            <div key={principle.name} className="card">
+              <h3>{principle.name}</h3>
+              <p>{principle.body}</p>
+            </div>
+          ))}
         </div>
-      </section>
+      </Section>
 
-      <section className="sec" id="the-founder">
-        <div className="wrap">
-          <SectionLabel label="05 / The founder" aside="Not a team · just me" />
-          <div className="g12" style={{ rowGap: 32 }}>
-            <div className="c-l">
-              <p className="h3 lg" style={{ marginBottom: 28 }}>
-                Ralph de Vinca is run by <span className="ac">one person.</span>
-              </p>
-              <Photo
-                src={photos.founder.src}
-                alt={photos.founder.alt}
-                ratio="4 / 5"
-                style={{ maxWidth: 340 }}
-                fallback={<PerfumeryMark size={96} className="ac" />}
-              />
-            </div>
-            <div className="c-r">
-              <p className="p">
-                Adrian, based in {site.location}. Studying Informatics at INSTIKI, with a focus on data and information management. Perfumery is the
-                interest taken seriously. Technology is the training put to use. The group exists so neither one has to be given up.
-              </p>
-              <p className="p">
-                There is no team here, and no reason to pretend there is. A message sent through this site reaches the person who will do the work.
-              </p>
-            </div>
+      <Section id="the-founder" label="The founder" aside="Not a team · just me">
+        <div className="split">
+          <div>
+            <p className="disp" style={{ marginBottom: 28 }}>
+              Ralph de Vinca is run by <span className="gold">one person.</span>
+            </p>
+            <Photo
+              src={photos.founder.src}
+              alt={photos.founder.alt}
+              ratio="3 / 4"
+              style={{ maxWidth: 340 }}
+              fallback={<PerfumeryMark size={96} className="gold" />}
+            />
+          </div>
+          <div>
+            <p className="p">
+              Adrian, based in {site.location}. Studying Informatics at INSTIKI, with a focus on data and information management. Perfumery is the
+              interest taken seriously. Technology is the training put to use. The group exists so neither one has to be given up.
+            </p>
+            <p className="p">
+              There is no team here, and no reason to pretend there is. A message sent through this site reaches the person who will do the work.
+            </p>
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section className="sec" id="editorial-commitment">
-        <div className="wrap">
-          <SectionLabel label="06 / Editorial commitment" aside="Three rules" />
-          <div className="g12" style={{ marginBottom: 48 }}>
-            <p className="h3 lg c-l">Honesty only means something when it costs something.</p>
-            <div className="c-r">
-              <p className="p">
-                Ralph de Vinca Perfumery will eventually sell a fragrance of its own. That creates a conflict worth naming before it exists, rather
-                than after someone points it out.
-              </p>
-              <p className="p">Three rules apply without exception.</p>
-            </div>
+      <Section id="editorial-commitment" label="Editorial commitment" aside="Three rules">
+        <div className="split" style={{ marginBottom: 32 }}>
+          <p className="disp">Honesty only means something when it costs something.</p>
+          <div>
+            <p className="p">
+              Ralph de Vinca Perfumery will eventually sell a fragrance of its own. That creates a conflict worth naming before it exists, rather
+              than after someone points it out.
+            </p>
+            <p className="p">Three rules apply without exception.</p>
           </div>
-          <ol className="list">
-            {RULES.map((rule, index) => (
-              <li key={rule.title} className="row">
-                <span className="n" style={{ gridColumn: '1 / 3' }}>{pad(index + 1)}</span>
-                <div style={{ gridColumn: '3 / 12' }}>
-                  <h3 className="h3" style={{ marginBottom: 8 }}>{rule.title}</h3>
-                  <p className="p">{rule.body}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-          <p className="p" style={{ marginTop: 32 }}>
-            Discovery and education stay structurally separate from anything for sale. A visitor always knows which side of the line they are on.
-          </p>
         </div>
-      </section>
+        <ol className="rows">
+          {RULES.map((rule, index) => (
+            <li key={rule.title}>
+              <span className="n">{pad(index + 1)}</span>
+              <h3>{rule.title}</h3>
+              <p>{rule.body}</p>
+            </li>
+          ))}
+        </ol>
+        <p className="p" style={{ marginTop: 32 }}>
+          Discovery and education stay structurally separate from anything for sale. A visitor always knows which side of the line they are on.
+        </p>
+      </Section>
     </>
+  );
+}
+
+function Section({ id, label, aside, children }: { id: string; label: string; aside: string; children: ReactNode }) {
+  return (
+    <section className="sec" id={id}>
+      <div className="wrap">
+        <div className="sec-head">
+          <h2 className="mono gold" style={{ margin: 0 }}>{label}</h2>
+          <p className="mono mu" style={{ margin: 0 }}>{aside}</p>
+        </div>
+        {children}
+      </div>
+    </section>
   );
 }
