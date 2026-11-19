@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import { Transform, Type } from 'class-transformer';
 import {
   ArrayMaxSize,
@@ -76,7 +77,8 @@ export class ProjectDto {
 
   @Transform(trim) @IsString() @Length(1, 120, { message: 'Give the project a name.' }) name: string;
   @IsIn(DIVISIONS, { message: 'Choose a division.' }) division: (typeof DIVISIONS)[number];
-  @Type(() => Number) @IsInt() @Min(1) @Max(999) position: number;
+  /** Ignored on save: the order is changed only through PATCH /admin/projects/order. */
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(999) position?: number;
   @Transform(trim) @IsString() @Length(1, 200, { message: 'Write a one-line summary.' }) summary: string;
   @IsOptional() @Transform(emptyToNull) @IsString() @MaxLength(240) index_summary: string | null;
   @IsOptional() @Transform(emptyToNull) @IsString() @MaxLength(80) meta_label: string | null;
@@ -121,10 +123,19 @@ export function sniffPhoto(buffer: Buffer): { mime: string; extension: string } 
   return null;
 }
 
+/** Re-encodes an upload as WebP, at most 2400px wide, with EXIF orientation applied and metadata dropped. */
+export function toWebp(buffer: Buffer): Promise<Buffer> {
+  return sharp(buffer).rotate().resize({ width: 2400, withoutEnlargement: true }).webp({ quality: 82 }).toBuffer();
+}
+
 /** Keeps only photos already stored on the project, in the requested order and with the new alt text. */
 export function keepOwnPhotos(current: Photo[], requested: Photo[] | undefined): Photo[] {
   if (!requested) return current;
   const stored = new Set(current.map((image) => image.path));
   const seen = new Set<string>();
   return requested.filter((image) => stored.has(image.path) && !seen.has(image.path) && seen.add(image.path));
+}
+
+export class OrderDto {
+  @IsArray() @ArrayMinSize(1) @ArrayMaxSize(999) @Type(() => Number) @IsInt({ each: true }) ids: number[];
 }

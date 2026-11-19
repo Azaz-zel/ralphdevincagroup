@@ -13,3 +13,12 @@ node_modules
 /client/_previous-design
 # Old Laravel files kept locally until the owner moves them.
 /storage
+# Local tool state and design references, not part of the app.
+/.claude
+/.codex
+/.serena
+/notion-design
+/reverensi
+/DELIVERY-GATE.md
+# Uploads from the MySQL build; photos now live in Supabase Storage.
+/server/uploads

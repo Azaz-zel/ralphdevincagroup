@@ -18,7 +18,7 @@ export const site = {
 export const photos: Record<'perfumery' | 'technology' | 'founder', { src: string | null; alt: string }> = {
   perfumery: { src: null, alt: '' },
   technology: { src: null, alt: '' },
-  founder: { src: null, alt: 'Adrian, founder of Ralph de Vinca Group' },
+  founder: { src: '/photos/founder.webp', alt: 'Adrian, founder of Ralph de Vinca Group, taking a photo in a round mirror' },
 };
 
 export const nav = [

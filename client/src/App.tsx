@@ -13,7 +13,6 @@ import WorkDetail, { NotFound } from '@/pages/WorkDetail';
 const AdminShell = lazy(() => import('@/components/admin-shell'));
 const Login = lazy(() => import('@/pages/admin/Login'));
 const Inbox = lazy(() => import('@/pages/admin/Inbox'));
-const Message = lazy(() => import('@/pages/admin/Message'));
 const Projects = lazy(() => import('@/pages/admin/Projects'));
 const ProjectForm = lazy(() => import('@/pages/admin/ProjectForm'));
 
@@ -32,7 +31,7 @@ function adminPage(path: string): ReactNode | null {
   if (path === '/admin/projects') return <Projects />;
   if (path === '/admin/projects/new') return <ProjectForm key="new" />;
   let params = match('/admin/inbox/:id', path);
-  if (params) return <Message id={params.id} />;
+  if (params) return <Inbox id={params.id} />;
   params = match('/admin/projects/:id', path);
   if (params) return <ProjectForm key={params.id} id={params.id} />;
   return null;
@@ -54,7 +53,7 @@ export default function App() {
     return (
       <Suspense fallback={null}>
         <AdminShell>
-          <Suspense fallback={<div className="ph" style={{ height: 320 }} aria-busy="true" />}>{adminPage(path) ?? <NotFound />}</Suspense>
+          <Suspense fallback={<span className="ghost" style={{ height: 320 }} aria-busy="true" />}>{adminPage(path) ?? <NotFound />}</Suspense>
         </AdminShell>
       </Suspense>
     );

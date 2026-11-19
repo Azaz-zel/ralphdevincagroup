@@ -2,7 +2,7 @@ const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eig
 
 export const spell = (n: number): string => WORDS[n] ?? String(n);
 export const pad = (n: number): string => String(n).padStart(2, '0');
-export const plural = (n: number, word: string): string => (n === 1 ? word : word + 's');
+export const plural = (n: number, word: string, many = word + 's'): string => (n === 1 ? word : many);
 
 export const divisionLabel = (division: string): string =>
   division === 'perfumery' ? 'Perfumery' : division === 'technology' ? 'Technology' : 'Not sure';

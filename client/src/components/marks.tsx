@@ -1,9 +1,9 @@
 // The division marks: one five-petal vinca, the flower the group is named after.
 // Perfumery grows it solid; Technology draws the same petals as a faceted structure.
 
-const PETAL = 'M100 96C93 82 85 62 88 47C91 34 103 27 115 30C126 33 130 46 126 58C121 74 109 86 100 96Z';
-const FACET = 'M100 94L88 58L91 40L103 30L119 33L126 50L117 72Z';
-const TURNS = [0, 72, 144, 216, 288];
+export const PETAL = 'M100 96C93 82 85 62 88 47C91 34 103 27 115 30C126 33 130 46 126 58C121 74 109 86 100 96Z';
+export const FACET = 'M100 94L88 58L91 40L103 30L119 33L126 50L117 72Z';
+export const TURNS = [0, 72, 144, 216, 288];
 
 type MarkProps = { size?: number; className?: string; label?: string };
 
@@ -47,5 +47,5 @@ export function TechnologyMark({ size = 48, className, label }: MarkProps) {
 }
 
 export function DivisionMark({ division, ...props }: MarkProps & { division: string }) {
-  return division === 'perfumery' ? <PerfumeryMark {...props} className={'ac ' + (props.className ?? '')} /> : <TechnologyMark {...props} />;
+  return division === 'perfumery' ? <PerfumeryMark {...props} className={'gold ' + (props.className ?? '')} /> : <TechnologyMark {...props} />;
 }
