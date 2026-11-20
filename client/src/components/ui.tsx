@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { WarningCircle } from '@phosphor-icons/react';
 import { pad } from '@/lib/format';
 import { useReducedMotion } from '@/lib/hooks';
@@ -15,9 +15,25 @@ export function Photo({ src, alt = '', fallback, ratio = '16 / 10', style, eager
   ratio?: string;
   style?: CSSProperties;
 }) {
+  // A stored path can outlive its file. When the request fails, the slot falls back
+  // instead of showing a broken image icon.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const broken = Boolean(src) && failedSrc === src;
+
   return (
     <span className="photo" style={{ aspectRatio: ratio, ...style }}>
-      {src ? <img src={src} alt={alt} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : 'auto'} decoding="async" /> : fallback}
+      {src && !broken ? (
+        <img
+          src={src}
+          alt={alt}
+          loading={eager ? 'eager' : 'lazy'}
+          fetchPriority={eager ? 'high' : 'auto'}
+          decoding="async"
+          onError={() => setFailedSrc(src)}
+        />
+      ) : (
+        fallback
+      )}
     </span>
   );
 }
